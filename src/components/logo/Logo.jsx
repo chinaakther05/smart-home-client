@@ -1,9 +1,11 @@
 import React from 'react';
 
 import logo from '../../assets/home.png'
+import { Link } from 'react-router';
 
 const Logo = () => {
     return (
+        <Link to='/'>
         <div className='flex items-center space-x-3'>
     <img 
         className='w-[70px] h-[70px] rounded-full object-cover' 
@@ -15,6 +17,7 @@ const Logo = () => {
 </h2>
 
 </div>
+</Link>
 
 
     );

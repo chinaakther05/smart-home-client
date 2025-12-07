@@ -2,6 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import useAuth from '../../../hooks/useAuth';
 import { Link, useLocation, useNavigate } from 'react-router';
+import SocialLogin from '../socialLogin/SocialLogin';
 
 
 const Login = () => {
@@ -58,6 +59,7 @@ const Login = () => {
         state={location.state}
         className='text-blue-400 underline' to='/register'>Register</Link> </p>
       </form>
+      <SocialLogin></SocialLogin>
       
     </div>
     );
