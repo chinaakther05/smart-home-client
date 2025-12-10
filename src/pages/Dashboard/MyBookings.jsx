@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import useAxiosSecure from "../../hooks/useAxiosSecure"; // Axios with Firebase token
 
 const MyBookings = () => {
-  const { user, loading } = useAuth(); // Firebase user + loading
+  const { user, loading } = useAuth();
+  const axiosSecure = useAxiosSecure(); // Token attach হবে
   const [bookings, setBookings] = useState([]);
-  const [fetching, setFetching] = useState(true); // bookings fetch loading
+  const [fetching, setFetching] = useState(true);
   const navigate = useNavigate();
 
   // Redirect to login if not logged in
@@ -19,22 +21,24 @@ const MyBookings = () => {
   useEffect(() => {
     if (!user?.email) return;
 
-    console.log("Fetching bookings for:", user.email);
-    setFetching(true);
-
-    fetch(`http://localhost:3000/bookings/${user.email}`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Bookings fetched:", data);
-        setBookings(Array.isArray(data) ? data : []); // object হলে empty array
-        setFetching(false);
-      })
-      .catch((err) => {
+    const fetchBookings = async () => {
+      setFetching(true);
+      try {
+        // Encode email to avoid issues with @
+        const email = encodeURIComponent(user.email);
+        const res = await axiosSecure.get(`/bookings/${email}`);
+        console.log("Bookings fetched:", res.data);
+        setBookings(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
         console.error("Error fetching bookings:", err);
         setBookings([]);
+      } finally {
         setFetching(false);
-      });
-  }, [user?.email]);
+      }
+    };
+
+    fetchBookings();
+  }, [user?.email, axiosSecure]);
 
   // Show spinner if auth loading or fetching bookings
   if (loading || fetching) {

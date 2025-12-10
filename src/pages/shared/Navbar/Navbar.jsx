@@ -71,11 +71,12 @@ const Navbar = () => {
             onMouseLeave={() => setOpen(false)}
           >
             {/* Profile Picture */}
-            <img
-              src={user?.photoURL || "https://i.ibb.co/yp4H0kP/user.png"}
-              className="w-10 h-10 rounded-full cursor-pointer border"
-              alt="profile"
-            />
+           <img
+  src={user?.photoURL || "https://via.placeholder.com/150?text=User"}
+  className="w-10 h-10 rounded-full cursor-pointer border"
+  alt="profile"
+/>
+
 
             {/* Logout Button */}
             <button

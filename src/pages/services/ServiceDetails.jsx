@@ -1,15 +1,16 @@
+// ServiceDetails.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 
 const ServiceDetails = () => {
   const { id } = useParams();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth(); // Firebase user + loading
 
   const [service, setService] = useState(null);
   const [bookingDate, setBookingDate] = useState("");
   const [location, setLocation] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // service loading
   const [message, setMessage] = useState("");
 
   // Fetch service details
@@ -30,7 +31,7 @@ const ServiceDetails = () => {
   const handleBooking = async (e) => {
     e.preventDefault();
 
-    if (!user?.email || !user?.displayName) {
+    if (!user?.email) { // ✅ শুধু email check
       alert("Please login first!");
       return;
     }
@@ -42,11 +43,11 @@ const ServiceDetails = () => {
 
     const booking = {
       serviceId: service._id,
-      serviceName: service.serviceName || "Unknown Service",
+      serviceName: service.serviceName || service.name || "Unknown Service",
       serviceImage: service.image || "",
       cost: service.price || 0,
       unit: service.unit || "N/A",
-      userName: user.displayName,
+      userName: user.displayName || "Anonymous",
       userEmail: user.email,
       bookingDate,
       location,
@@ -57,7 +58,10 @@ const ServiceDetails = () => {
     try {
       const res = await fetch("http://localhost:3000/bookings", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          // এখানে যদি তুমি JWT ব্যবহার করতে চাও, পরে Authorization header add করতে হবে
+        },
         body: JSON.stringify(booking),
       });
 
@@ -76,7 +80,7 @@ const ServiceDetails = () => {
     }
   };
 
-  if (loading) return <p>Loading service details...</p>;
+  if (loading || authLoading) return <p>Loading...</p>;
   if (!service) return <p>Service not found.</p>;
 
   return (
