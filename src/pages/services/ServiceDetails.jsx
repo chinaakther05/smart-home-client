@@ -2,18 +2,17 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import Swal from "sweetalert2"; // ✅ Import SweetAlert2
 
 const ServiceDetails = () => {
   const { id } = useParams();
-  const { user, loading: authLoading } = useAuth(); // Firebase user + loading
+  const { user, loading: authLoading } = useAuth();
 
   const [service, setService] = useState(null);
   const [bookingDate, setBookingDate] = useState("");
   const [location, setLocation] = useState("");
-  const [loading, setLoading] = useState(true); // service loading
-  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  // Fetch service details
   useEffect(() => {
     setLoading(true);
     fetch(`http://localhost:3000/services/${id}`)
@@ -31,13 +30,21 @@ const ServiceDetails = () => {
   const handleBooking = async (e) => {
     e.preventDefault();
 
-    if (!user?.email) { // ✅ শুধু email check
-      alert("Please login first!");
+    if (!user?.email) {
+      Swal.fire({
+        icon: "warning",
+        title: "Login Required",
+        text: "Please login first to book this service!",
+      });
       return;
     }
 
     if (!bookingDate || !location) {
-      alert("Please provide booking date and location.");
+      Swal.fire({
+        icon: "info",
+        title: "Incomplete Details",
+        text: "Please provide booking date and location.",
+      });
       return;
     }
 
@@ -58,25 +65,34 @@ const ServiceDetails = () => {
     try {
       const res = await fetch("http://localhost:3000/bookings", {
         method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          // এখানে যদি তুমি JWT ব্যবহার করতে চাও, পরে Authorization header add করতে হবে
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(booking),
       });
 
       const data = await res.json();
 
       if (data.insertedId) {
-        setMessage("Booking Successful!");
+        Swal.fire({
+          icon: "success",
+          title: "Booking Successful",
+          text: "Your service has been booked successfully!",
+        });
         setBookingDate("");
         setLocation("");
       } else {
-        setMessage(data.message || "Failed to book!");
+        Swal.fire({
+          icon: "error",
+          title: "Booking Failed",
+          text: data.message || "Failed to book service.",
+        });
       }
     } catch (err) {
       console.error(err);
-      setMessage("Server error while booking.");
+      Swal.fire({
+        icon: "error",
+        title: "Server Error",
+        text: "Something went wrong while booking.",
+      });
     }
   };
 
@@ -115,10 +131,11 @@ const ServiceDetails = () => {
           <button type="submit" className="btn btn-primary w-full mt-2">
             Book Now
           </button>
-          {message && <p className="mt-2 text-center text-green-600">{message}</p>}
         </form>
       ) : (
-        <p className="text-center text-red-500">Please login to book this service.</p>
+        <p className="text-center text-red-500 mt-4">
+          Please login to book this service.
+        </p>
       )}
     </div>
   );
