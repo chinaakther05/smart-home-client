@@ -1,3 +1,4 @@
+// MyBookings.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
@@ -11,12 +12,12 @@ const MyBookings = () => {
   const [fetching, setFetching] = useState(true);
   const navigate = useNavigate();
 
+  // Redirect if not logged in
   useEffect(() => {
-    if (!loading && !user) {
-      navigate("/login");
-    }
+    if (!loading && !user) navigate("/login");
   }, [user, loading, navigate]);
 
+  // Fetch bookings
   useEffect(() => {
     if (!user?.email) return;
 
@@ -39,36 +40,45 @@ const MyBookings = () => {
   // Cancel booking
   const handleCancel = async (id) => {
     const result = await Swal.fire({
-      title: 'Are you sure?',
+      title: "Are you sure?",
       text: "Do you want to cancel this booking?",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: 'Yes, cancel it!',
-      cancelButtonText: 'No, keep it'
+      confirmButtonText: "Yes, cancel it!",
+      cancelButtonText: "No, keep it",
     });
 
     if (result.isConfirmed) {
       try {
         const res = await axiosSecure.patch(`/bookings/${id}`, { status: "cancelled" });
         if (res.data.modifiedCount > 0) {
-          Swal.fire('Cancelled!', 'Booking has been cancelled.', 'success');
-          setBookings(bookings.map(b => b._id === id ? { ...b, status: "cancelled" } : b));
+          Swal.fire("Cancelled!", "Booking has been cancelled.", "success");
+          setBookings(
+            bookings.map((b) => (b._id === id ? { ...b, status: "cancelled" } : b))
+          );
         } else {
-          Swal.fire('Failed!', 'Failed to cancel booking.', 'error');
+          Swal.fire("Failed!", "Failed to cancel booking.", "error");
         }
       } catch (err) {
         console.error(err);
-        Swal.fire('Error!', 'Something went wrong.', 'error');
+        Swal.fire("Error!", "Something went wrong.", "error");
       }
     }
   };
 
   const handleUpdate = (id) => {
-    Swal.fire('Update', `Update booking ${id} functionality here.`, 'info');
+    Swal.fire("Update", `Update booking ${id} functionality placeholder.`, "info");
   };
 
+  // Pay button
   const handlePay = (id) => {
-    Swal.fire('Pay', `Pay for booking ${id} functionality here.`, 'info');
+    const booking = bookings.find((b) => b._id === id);
+    if (!booking || booking.status === "cancelled") {
+      Swal.fire("Error", "Cannot pay for cancelled or invalid booking.", "error");
+      return;
+    }
+    // Navigate to payment page with bookingId
+    navigate(`/dashboard/payment/${id}`);
   };
 
   if (loading || fetching) {
@@ -80,15 +90,15 @@ const MyBookings = () => {
   }
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-semibold mb-6">My Bookings</h2>
+    <div className="p-4 sm:p-6">
+      <h2 className="text-2xl font-semibold mb-6 text-center sm:text-left">My Bookings</h2>
 
       {bookings.length === 0 ? (
         <p className="text-gray-500 text-center">You have no bookings yet.</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="table w-full border">
-            <thead>
+          <table className="table w-full min-w-[600px] border">
+            <thead className="bg-gray-100">
               <tr className="text-center">
                 <th>Image</th>
                 <th>Service Name</th>
@@ -106,10 +116,10 @@ const MyBookings = () => {
                     <img
                       src={booking.serviceImage || "https://via.placeholder.com/100"}
                       alt={booking.serviceName || "Service"}
-                      className="w-24 h-24 object-cover mx-auto rounded-md"
+                      className="w-20 h-20 sm:w-24 sm:h-24 object-cover mx-auto rounded-md"
                     />
                   </td>
-                  <td>{booking.serviceName || "Unknown Service"}</td>
+                  <td className="truncate max-w-[100px] sm:max-w-none">{booking.serviceName || "Unknown Service"}</td>
                   <td>
                     {booking.bookingDate
                       ? new Date(booking.bookingDate).toLocaleDateString("en-BD", {
@@ -122,28 +132,26 @@ const MyBookings = () => {
                   <td>{booking.location || "Unknown Location"}</td>
                   <td>{(booking.cost ?? 0).toLocaleString("en-BD")} BDT</td>
                   <td className="capitalize">{booking.status}</td>
-                  <td className="flex justify-center gap-2">
+                  <td className="flex flex-wrap justify-center gap-2">
                     <button
-                      className="btn btn-sm btn-warning"
+                      className="btn btn-sm btn-warning flex-1 min-w-[70px]"
                       onClick={() => handleUpdate(booking._id)}
                       disabled={booking.status === "cancelled"}
                     >
                       Update
                     </button>
                     <button
-                      className="btn btn-sm btn-error"
+                      className="btn btn-sm btn-error flex-1 min-w-[70px]"
                       onClick={() => handleCancel(booking._id)}
                       disabled={booking.status === "cancelled"}
                     >
                       Cancel
                     </button>
-                    
                     <button
-                      className="btn btn-sm btn-primary"
+                      className="btn btn-sm btn-primary flex-1 min-w-[70px]"
                       onClick={() => handlePay(booking._id)}
                       disabled={booking.status === "cancelled"}
                     >
-                  
                       Pay
                     </button>
                   </td>

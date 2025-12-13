@@ -21,6 +21,8 @@ import PaymentHistory from "../pages/Dashboard/PaymentHistory";
 import ServiceCard from "../pages/serviceCard/ServiceCard";
 import ServiceDetails from "../pages/services/ServiceDetails";
 import Payment from './../pages/Dashboard/Payment';
+import PaymentSuccess from "../pages/Dashboard/PaymentSuccess";
+import PaymentCancelled from "../pages/Dashboard/PaymentCancelled";
 
 
 export const router = createBrowserRouter([
@@ -77,36 +79,28 @@ export const router = createBrowserRouter([
       }
     ]
   },
-  {
-    path: 'dashboardLayout',
-    element: <PrivaterRoute><DashboardLayout></DashboardLayout></PrivaterRoute>,
-    children: [
-      {
-        path: 'dashboard/users',
-        element: <Users></Users>
-        
-      },
-      {
-        path: 'profile',
-        element: <MyProfile></MyProfile>
-      },
-      {
-        path:'myBookings',
-        element: <MyBookings></MyBookings>
-      },
-      {
-        path:'bookingCancellation',
-        element: <BookingCancellation></BookingCancellation>
-      },
-      {
-        path:'paymentHistory',
-        element: <PaymentHistory></PaymentHistory>
-      },
-      {
-        path:'payment',
-        element: <Payment></Payment>
-      }
-     
-    ]
-  }
+ {
+  path: 'dashboard',
+  element: <PrivaterRoute><DashboardLayout /></PrivaterRoute>,
+  children: [
+    { path: 'users', element: <Users /> },
+    { path: 'profile', element: <MyProfile /> },
+    { path: 'myBookings', element: <MyBookings /> },
+    { path: 'bookingCancellation', element: <BookingCancellation /> },
+    { path: 'paymentHistory', element: <PaymentHistory /> },
+    {
+       path: 'payment/:parcelId',
+        element: <Payment />
+    },
+    {
+      path:'payment-success',
+      Component: PaymentSuccess
+    },
+    {
+      path:'payment-cancelled',
+      Component: PaymentCancelled
+    }
+
+  ]
+}
 ]);
