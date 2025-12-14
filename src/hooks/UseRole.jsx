@@ -10,15 +10,13 @@ const UseRole = () => {
     queryKey: ['user-role', user?.email],
     queryFn: async () => {
       const res = await axiosSecure.get(`/users/${user.email}/role`);
-      // response expected: { role: 'admin' } 
       return res.data;
     },
-    enabled: !!user?.email, // only fetch if user exists
+    enabled: !!user?.email,
   });
 
   const role = roleData?.role || 'user';
-
-  return { role, roleLoading }; // object return
+  return { role, roleLoading };
 };
 
 export default UseRole;

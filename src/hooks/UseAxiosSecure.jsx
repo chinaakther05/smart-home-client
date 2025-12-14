@@ -7,14 +7,14 @@ const axiosSecure = axios.create({
   baseURL: "http://localhost:3000/",
 });
 
-const useAxiosSecure = () => {   // convention: hook names start with use
+const useAxiosSecure = () => {   
   const { user } = useAuth();
 
   useEffect(() => {
     const requestInterceptor = axiosSecure.interceptors.request.use(
       async (config) => {
         if (user) {
-          const token = await user.getIdToken(); // Firebase ID token
+          const token = await user.getIdToken(); 
           config.headers.Authorization = `Bearer ${token}`;
         }
         return config;

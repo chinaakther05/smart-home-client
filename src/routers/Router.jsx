@@ -23,6 +23,8 @@ import ServiceDetails from "../pages/services/ServiceDetails";
 import Payment from './../pages/Dashboard/Payment';
 import PaymentSuccess from "../pages/Dashboard/PaymentSuccess";
 import PaymentCancelled from "../pages/Dashboard/PaymentCancelled";
+import AdminHome from "../pages/Dashboard/Admin/AdminHome";
+import Decorator from "../pages/Dashboard/decorator/Decorator";
 
 
 export const router = createBrowserRouter([
@@ -99,6 +101,14 @@ export const router = createBrowserRouter([
     {
       path:'payment-cancelled',
       Component: PaymentCancelled
+    },
+    {
+      path: 'admin',
+      Component: AdminHome
+    },
+    {
+      path:'decorator',
+      Component: Decorator
     }
 
   ]

@@ -18,7 +18,7 @@ const Register = () => {
         // 1️⃣ Firebase Auth-এ user create
         registerUser(data.email, data.password)
             .then(() => {
-                // 2️⃣ Image upload (imgbb)
+                
                 const formData = new FormData();
                 formData.append('image', profileImg);
                 const image_API_URL = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_host_key}`;
@@ -27,7 +27,7 @@ const Register = () => {
                     .then(res => {
                         const photoURL = res.data.data.url;
 
-                        // 3️⃣ MongoDB তে user save
+                        //  MongoDB
                         const userInfo = {
                             email: data.email,
                             displayName: data.name,

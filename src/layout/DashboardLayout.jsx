@@ -1,78 +1,92 @@
 import React, { useState } from "react";
-import { MdDashboard } from "react-icons/md";
+import { MdDashboard, MdOutlinePayment } from "react-icons/md";
 import { NavLink, Outlet } from "react-router-dom";
+import { ImProfile } from "react-icons/im";
+import { TbBrandBooking } from "react-icons/tb";
 
 const DashboardLayout = () => {
+  // USER menu
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // ADMIN menu
+  const [adminMenuOpen, setAdminMenuOpen] = useState(false);
+
   const toggleMenu = () => setMenuOpen(!menuOpen);
+  const toggleAdminMenu = () => setAdminMenuOpen(!adminMenuOpen);
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-
-      {/* Sidebar */}
+      {/* SIDEBAR */}
       <aside className="w-64 bg-gray-100 p-4 border-r">
+
+        {/* Home */}
         <NavLink to="/">
           <h2 className="text-xl font-bold mb-4">Home Page</h2>
         </NavLink>
 
-        {/* User Dashboard Button */}
+        {/* USER DASHBOARD */}
         <button
           onClick={toggleMenu}
           className="w-full text-left flex items-center gap-2 font-semibold text-lg mb-3"
         >
-            <MdDashboard />
+          <MdDashboard />
           User Dashboard
         </button>
 
-        {/* Submenu - only show if menuOpen */}
         {menuOpen && (
-          <ul className="space-y-2 ml-2 mt-2">
-            <li>
-              <NavLink
-                to="profile"
-                className={({ isActive }) =>
-                  isActive ? "text-blue-600 font-semibold" : ""
-                }
-              >
-                My Profile
-              </NavLink>
+          <ul className="space-y-2 ml-4 mt-2">
+            <li className="flex gap-2 items-center">
+              <ImProfile />
+              <NavLink className='font-bold' to="profile ">My Profile</NavLink>
+            </li>
+            <li  className="flex gap-2 items-center">
+              <TbBrandBooking />
+              <NavLink className='font-bold' to="myBookings">My Bookings</NavLink>
             </li>
             <li>
-              <NavLink
-                to="myBookings"
-                className={({ isActive }) =>
-                  isActive ? "text-blue-600 font-semibold" : ""
-                }
-              >
-                My Bookings
-              </NavLink>
+              <NavLink to="bookingCancellation">Booking Cancellation</NavLink>
             </li>
-            <li>
-              <NavLink
-                to="bookingCancellation"
-                className={({ isActive }) =>
-                  isActive ? "text-blue-600 font-semibold" : ""
-                }
-              >
-                Booking Cancellation
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="paymentHistory"
-                className={({ isActive }) =>
-                  isActive ? "text-blue-600 font-semibold" : ""
-                }
-              >
-                Payment History
-              </NavLink>
+            <li  className="flex gap-2 items-center">
+              <MdOutlinePayment />
+              <NavLink className='font-bold' to="paymentHistory">Payment History</NavLink>
             </li>
           </ul>
         )}
+
+        {/* ADMIN DASHBOARD */}
+        <hr className="my-4" />
+
+        <button
+          onClick={toggleAdminMenu}
+          className="w-full text-left flex items-center gap-2 font-semibold text-lg mb-3"
+        >
+          <MdDashboard />
+          Admin Dashboard
+        </button>
+
+     
+
+          <ul className="space-y-2 ml-4 mt-2">
+            <li>
+              <NavLink to="admin">Admin Home</NavLink>
+            </li>
+            <li>
+              <NavLink to="admin/manageServices">Manage Services</NavLink>
+            </li>
+            <li>
+              <NavLink to="admin/manageDecorators">Manage Decorators</NavLink>
+            </li>
+            <li>
+              <NavLink to="admin/manageBookings">Manage Bookings</NavLink>
+            </li>
+            <li>
+              <NavLink to="admin/analytics">Analytics</NavLink>
+            </li>
+          </ul>
+      
       </aside>
 
-      {/* Main content */}
+      {/* MAIN CONTENT */}
       <main className="flex-1 p-6">
         <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
         <Outlet />

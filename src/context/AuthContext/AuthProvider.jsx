@@ -10,6 +10,7 @@ import {
   updateProfile 
 } from 'firebase/auth';
 import { auth } from './../../firebase/firebase.init';
+import axios from 'axios';
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -43,10 +44,26 @@ const AuthProvider = ({ children }) => {
 
   // observe user auth state
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       setLoading(false);
-      console.log(currentUser);
+
+      if (currentUser?.email) {
+        try {
+          const res = await axios.get(`http://localhost:3000/users/${currentUser.email}`);
+          if (!res.data) {
+            await axios.post("http://localhost:3000/users", {
+              email: currentUser.email,
+              displayName: currentUser.displayName,
+              photoURL: currentUser.photoURL,
+              role: "user", // default role
+            });
+            console.log("New user added to MongoDB");
+          }
+        } catch (err) {
+          console.error("Error adding user to MongoDB:", err);
+        }
+      }
     });
 
     return () => unsubscribe();
