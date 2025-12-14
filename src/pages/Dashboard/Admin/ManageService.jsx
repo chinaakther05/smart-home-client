@@ -4,18 +4,26 @@ import Swal from "sweetalert2";
 const ManageService = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const [editingService, setEditingService] = useState(null);
   const [editName, setEditName] = useState("");
   const [editPrice, setEditPrice] = useState("");
 
+  const [newName, setNewName] = useState("");
+  const [newPrice, setNewPrice] = useState("");
+
   // Fetch all services
-  useEffect(() => {
+  const fetchServices = () => {
     fetch("http://localhost:3000/services")
       .then(res => res.json())
       .then(data => {
         setServices(data);
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchServices();
   }, []);
 
   // Delete service
@@ -28,14 +36,10 @@ const ManageService = () => {
       confirmButtonText: "Yes, delete it!"
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(`http://localhost:3000/services/${id}`, {
-          method: "DELETE"
-        })
+        fetch(`http://localhost:3000/services/${id}`, { method: "DELETE" })
           .then(res => res.json())
           .then(() => {
-            const remaining = services.filter(service => service._id !== id);
-            setServices(remaining);
-
+            setServices(services.filter(service => service._id !== id));
             Swal.fire("Deleted!", "Service has been deleted.", "success");
           });
       }
@@ -49,7 +53,7 @@ const ManageService = () => {
     setEditPrice(service.price);
   };
 
-  // Save changes
+  // Save edited service
   const handleSave = () => {
     fetch(`http://localhost:3000/services/${editingService._id}`, {
       method: "PATCH",
@@ -58,12 +62,35 @@ const ManageService = () => {
     })
       .then(res => res.json())
       .then(() => {
-        const updatedServices = services.map(s =>
+        const updated = services.map(s =>
           s._id === editingService._id ? { ...s, serviceName: editName, price: editPrice } : s
         );
-        setServices(updatedServices);
+        setServices(updated);
         setEditingService(null);
         Swal.fire("Updated!", "Service has been updated.", "success");
+      });
+  };
+
+  // Add new service
+  const handleAdd = () => {
+    if (!newName || !newPrice) {
+      Swal.fire("Error", "Service name and price are required!", "error");
+      return;
+    }
+
+    const newService = { serviceName: newName, price: newPrice };
+
+    fetch("http://localhost:3000/services", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newService)
+    })
+      .then(res => res.json())
+      .then(() => {
+        fetchServices();
+        setNewName("");
+        setNewPrice("");
+        Swal.fire("Added!", "New service has been added.", "success");
       });
   };
 
@@ -73,6 +100,29 @@ const ManageService = () => {
     <div>
       <h1 className="text-2xl font-bold mb-4">Manage Services</h1>
 
+      {/* Add new service */}
+      <div className="mb-6 p-4 border rounded">
+        <h2 className="font-bold mb-2">Add New Service</h2>
+        <input
+          type="text"
+          placeholder="Service Name"
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+          className="border p-2 mr-2"
+        />
+        <input
+          type="number"
+          placeholder="Price"
+          value={newPrice}
+          onChange={(e) => setNewPrice(e.target.value)}
+          className="border p-2 mr-2"
+        />
+        <button onClick={handleAdd} className="btn btn-sm btn-success">
+          Add Service
+        </button>
+      </div>
+
+      {/* List services */}
       {services.length === 0 ? (
         <p>No services found</p>
       ) : (
@@ -85,7 +135,6 @@ const ManageService = () => {
               <th>Action</th>
             </tr>
           </thead>
-
           <tbody>
             {services.map((service, index) => (
               <tr key={service._id}>
@@ -138,10 +187,7 @@ const ManageService = () => {
               >
                 Cancel
               </button>
-              <button
-                onClick={handleSave}
-                className="btn btn-sm btn-success"
-              >
+              <button onClick={handleSave} className="btn btn-sm btn-success">
                 Save
               </button>
             </div>

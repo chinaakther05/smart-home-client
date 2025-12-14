@@ -53,7 +53,12 @@ const ManageBookings = () => {
             )
           );
 
-          Swal.fire("Success", "Booking status updated", "success");
+          // Show notification with status
+          Swal.fire(
+            newStatus === "approved" ? "Approved ✅" : "Cancelled ❌",
+            `Booking has been ${newStatus}`,
+            "success"
+          );
         } catch (err) {
           console.error(err);
           Swal.fire("Error", "Failed to update status", "error");
@@ -92,7 +97,23 @@ const ManageBookings = () => {
               <td>{booking.serviceName}</td>
               <td>{booking.bookingDate}</td>
               <td>{booking.location}</td>
-              <td className="capitalize">{booking.status}</td>
+              <td>
+                <span
+                  className={`px-2 py-1 rounded text-white ${
+                    booking.status === "approved"
+                      ? "bg-green-500"
+                      : booking.status === "cancelled"
+                      ? "bg-red-500"
+                      : "bg-gray-400"
+                  }`}
+                >
+                  {booking.status === "approved"
+                    ? "Approved"
+                    : booking.status === "cancelled"
+                    ? "Cancelled"
+                    : "Pending"}
+                </span>
+              </td>
               <td className="flex gap-2">
                 {booking.status !== "approved" && (
                   <button

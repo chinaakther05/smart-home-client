@@ -1,19 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { MdDashboard, MdFreeCancellation, MdOutlinePayment } from "react-icons/md";
 import { ImProfile } from "react-icons/im";
 import { TbBrandBooking } from "react-icons/tb";
+import useAuth from "../hooks/useAuth";
 
 const DashboardLayout = () => {
+  const { user } = useAuth();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [adminMenuOpen, setAdminMenuOpen] = useState(false);
   const [decoratorMenuOpen, setDecoratorMenuOpen] = useState(false);
+  const [role, setRole] = useState(""); // role declare
+
+  // Firebase / backend থেকে role fetch
+  useEffect(() => {
+    if (user?.email) {
+      fetch(`http://localhost:3000/users/${user.email}/role`)
+        .then(res => res.json())
+        .then(data => setRole(data.role))
+        .catch(err => console.error(err));
+    }
+  }, [user]);
 
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* SIDEBAR */}
       <aside className="w-64 bg-gray-100 p-4 border-r">
-
         {/* HOME */}
         <NavLink to="/">
           <h2 className="text-xl font-bold mb-4">Home Page</h2>
@@ -57,7 +69,7 @@ const DashboardLayout = () => {
           <MdDashboard />
           Admin Dashboard
         </button>
-        {adminMenuOpen && (
+        {adminMenuOpen && role === "admin" && (
           <ul className="space-y-2 ml-4 mt-2">
             <li><NavLink to="admin">Admin Home</NavLink></li>
             <li><NavLink to="admin/manageServices">Manage Services</NavLink></li>
@@ -85,7 +97,6 @@ const DashboardLayout = () => {
             <li><NavLink to="decorator/earnings">Earnings Summary</NavLink></li>
           </ul>
         )}
-
       </aside>
 
       {/* MAIN CONTENT */}
