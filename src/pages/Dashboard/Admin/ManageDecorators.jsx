@@ -83,11 +83,22 @@ const ManageDecorators = () => {
     });
   };
 
-  if (loading) return <p>Loading users...</p>;
+  if (loading) {
+  return (
+    <div className="flex justify-center py-10">
+      <span className="loading loading-spinner loading-lg text-primary"></span>
+    </div>
+  );
+}
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Manage Users</h1>
+      <h1 className="text-2xl font-bold mb-4 flex items-center gap-2">
+  Manage Users
+  <span className="bg-blue-600 text-white text-sm px-2 py-1 rounded-full">
+    {users.length}
+  </span>
+</h1>
 
       <table className="table w-full border">
         <thead>

@@ -67,12 +67,32 @@ const ManageBookings = () => {
     });
   };
 
-  if (loading) return <p>Loading bookings...</p>;
-  if (!bookings.length) return <p>No bookings found.</p>;
+if (loading) {
+  return (
+    <div className="flex justify-center py-10">
+      <span className="loading loading-spinner loading-lg text-primary"></span>
+    </div>
+  );
+}
+
+if (!bookings || bookings.length === 0) {
+  return (
+    <p className="text-center text-gray-500 py-10">
+      No bookings found.
+    </p>
+  );
+}
+
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Manage Bookings</h1>
+      <h1 className="text-2xl font-bold mb-4 flex items-center gap-2">
+  Manage Bookings
+  <span className="bg-purple-600 text-white text-sm px-2 py-1 rounded-full">
+    {bookings.length}
+  </span>
+</h1>
+
 
       <table className="table w-full">
         <thead>

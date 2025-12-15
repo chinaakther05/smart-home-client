@@ -102,7 +102,12 @@ const MyBookings = () => {
 
   return (
     <div className="p-4 sm:p-6">
-      <h2 className="text-2xl font-semibold mb-6 text-center sm:text-left">My Bookings</h2>
+      <h2 className="text-2xl font-semibold mb-6 flex justify-center sm:justify-start items-center gap-2">
+  My Bookings
+  <span className="bg-blue-600 text-white text-sm px-2 py-1 rounded-full">
+    {bookings.length}
+  </span>
+</h2>
 
       {bookings.length === 0 ? (
         <p className="text-gray-500 text-center">You have no bookings yet.</p>

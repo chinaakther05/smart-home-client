@@ -94,11 +94,23 @@ const ManageService = () => {
       });
   };
 
-  if (loading) return <p className="text-center">Loading services...</p>;
+  if (loading) {
+  return (
+    <div className="flex justify-center py-10">
+      <span className="loading loading-spinner loading-lg text-primary"></span>
+    </div>
+  );
+}
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Manage Services</h1>
+
+      <h1 className="text-2xl font-bold mb-4 flex items-center gap-2">
+  Manage Services
+  <span className="bg-blue-600 text-white text-sm px-2 py-1 rounded-full">
+    {services.length}
+  </span>
+</h1>
 
       {/* Add new service */}
       <div className="mb-6 p-4 border rounded">

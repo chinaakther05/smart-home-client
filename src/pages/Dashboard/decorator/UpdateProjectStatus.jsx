@@ -1,9 +1,7 @@
-// src/pages/Dashboard/UpdateProjectStatus.jsx
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { AuthContext } from "../../../context/AuthContext/AuthContext";
-
 
 const UpdateProjectStatus = () => {
   const { user } = useContext(AuthContext);
@@ -66,39 +64,64 @@ const UpdateProjectStatus = () => {
     }
   };
 
-  if (loading) return <p>Loading projects...</p>;
-  if (projects.length === 0) return <p>No assigned projects found.</p>;
+  if (loading)
+    return (
+      <div className="flex justify-center py-10">
+        <span className="loading loading-spinner text-primary loading-lg"></span>
+      </div>
+    );
+
+  if (projects.length === 0)
+    return <p className="text-center py-6">No assigned projects found.</p>;
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl mb-4">Update Project Status</h2>
-      <ul className="space-y-2">
+    <div className="p-4 space-y-4">
+      <h1 className="text-2xl font-bold mb-4 flex items-center gap-2">
+        Update Project Status
+        <span className="bg-purple-600 text-white text-sm px-2 py-1 rounded-full">
+          {projects.length}
+        </span>
+      </h1>
+
+      <ul className="space-y-3">
         {projects.map((project) => (
           <li
             key={project._id}
-            className="border p-2 rounded shadow-sm flex justify-between items-center"
+            className="border p-4 rounded-xl shadow flex justify-between items-center"
           >
             <div>
-              <p><strong>Service:</strong> {project.serviceName}</p>
-              <p><strong>Status:</strong> {project.status}</p>
+              <p className="font-semibold">{project.serviceName}</p>
+              <p className="mt-1">
+                Status:{" "}
+                <span
+                  className={`px-2 py-1 rounded text-white capitalize ${
+                    project.status === "completed"
+                      ? "bg-green-500"
+                      : project.status === "in-progress"
+                      ? "bg-yellow-500"
+                      : "bg-gray-400"
+                  }`}
+                >
+                  {project.status}
+                </span>
+              </p>
             </div>
+
             <div className="flex space-x-2">
-              {project.status !== "completed" && (
-                <button
-                  className="btn btn-sm btn-success"
-                  onClick={() => handleStatusChange(project._id, "completed")}
-                >
-                  Completed
-                </button>
-              )}
-              {project.status !== "in-progress" && (
-                <button
-                  className="btn btn-sm btn-warning"
-                  onClick={() => handleStatusChange(project._id, "in-progress")}
-                >
-                  In Progress
-                </button>
-              )}
+              <button
+                className="btn btn-sm btn-success"
+                onClick={() => handleStatusChange(project._id, "completed")}
+                disabled={project.status === "completed"}
+              >
+                Completed
+              </button>
+              <button
+                className="btn btn-sm btn-warning"
+                onClick={() => handleStatusChange(project._id, "in-progress")}
+                disabled={project.status === "in-progress"}
+              >
+                In Progress
+              </button>
             </div>
           </li>
         ))}

@@ -1,3 +1,4 @@
+// src/pages/Dashboard/Admin/Analytics.jsx
 import React, { useEffect, useState } from "react";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import {
@@ -31,15 +32,21 @@ const Analytics = () => {
         setLoading(false);
       } catch (err) {
         console.error("Analytics fetch error:", err);
+        setLoading(false);
       }
     };
 
     fetchAnalytics();
   }, [axiosSecure]);
 
-  if (loading) return <p>Loading analytics...</p>;
+  if (loading)
+    return (
+      <div className="flex justify-center py-10">
+        <span className="loading loading-spinner text-primary loading-lg"></span>
+      </div>
+    );
 
-  // 📊 Chart Data
+  // Chart Data
   const chartData = [
     { name: "Users", count: usersCount },
     { name: "Bookings", count: bookingsCount },
@@ -52,28 +59,25 @@ const Analytics = () => {
 
       {/* STAT CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-        <div className="p-6 bg-blue-100 rounded shadow text-center">
+        <div className="p-6 bg-blue-100 rounded-xl shadow hover:shadow-lg transition text-center">
           <h2 className="font-bold text-lg">Total Users</h2>
           <p className="text-2xl">{usersCount}</p>
         </div>
 
-        <div className="p-6 bg-green-100 rounded shadow text-center">
+        <div className="p-6 bg-green-100 rounded-xl shadow hover:shadow-lg transition text-center">
           <h2 className="font-bold text-lg">Total Bookings</h2>
           <p className="text-2xl">{bookingsCount}</p>
         </div>
 
-        <div className="p-6 bg-yellow-100 rounded shadow text-center">
+        <div className="p-6 bg-yellow-100 rounded-xl shadow hover:shadow-lg transition text-center">
           <h2 className="font-bold text-lg">Total Services</h2>
           <p className="text-2xl">{servicesCount}</p>
         </div>
       </div>
 
-      {/* 📊 CHART SECTION */}
-      <div className="bg-white p-6 rounded shadow">
-        <h2 className="text-xl font-semibold mb-4">
-          System Overview Chart
-        </h2>
-
+      {/* CHART SECTION */}
+      <div className="bg-white p-6 rounded-xl shadow">
+        <h2 className="text-xl font-semibold mb-4">System Overview Chart</h2>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={chartData}>
             <XAxis dataKey="name" />

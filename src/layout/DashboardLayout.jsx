@@ -4,6 +4,9 @@ import { MdDashboard, MdFreeCancellation, MdOutlinePayment } from "react-icons/m
 import { ImProfile } from "react-icons/im";
 import { TbBrandBooking } from "react-icons/tb";
 import useAuth from "../hooks/useAuth";
+import { FcHome } from "react-icons/fc";
+import { RiAdminFill } from "react-icons/ri";
+import { GiPaintRoller } from "react-icons/gi";
 
 const DashboardLayout = () => {
   const { user } = useAuth();
@@ -25,16 +28,18 @@ const DashboardLayout = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* SIDEBAR */}
-      <aside className="w-64 bg-gray-100 p-4 border-r">
+      <aside className="w-64 bg-green-50 p-4 border-r">
         {/* HOME */}
-        <NavLink to="/">
-          <h2 className="text-xl font-bold mb-4">Home Page</h2>
-        </NavLink>
+        <NavLink className="flex items-center gap-2" to="/">
+  <FcHome size={24} /> 
+  <span className="text-3xl font-bold">Home Page</span>
+</NavLink>
+
 
         {/* USER DASHBOARD */}
         <button
           onClick={() => setUserMenuOpen(!userMenuOpen)}
-          className="w-full text-left flex items-center gap-2 font-semibold text-lg mb-3"
+          className="w-full text-left flex items-center gap-2 mt-3 text-blue-500 font-bold text-lg mb-3"
         >
           <MdDashboard />
           User Dashboard
@@ -43,19 +48,40 @@ const DashboardLayout = () => {
           <ul className="space-y-2 ml-4 mt-2">
             <li className="flex gap-2 items-center">
               <ImProfile />
-              <NavLink className="font-bold" to="profile">My Profile</NavLink>
+              <NavLink to="profile" className={({ isActive }) =>
+                  isActive
+                 ? "text-blue-600 underline font-bold"
+                    : "font-bold hover:text-blue-600"
+                }>My Profile</NavLink>
             </li>
             <li className="flex gap-2 items-center">
               <TbBrandBooking />
-              <NavLink className="font-bold" to="myBookings">My Bookings</NavLink>
+              <NavLink
+  to="myBookings"
+  className={({ isActive }) =>
+    isActive
+      ? "text-blue-600 underline font-bold"
+      : "font-bold hover:text-blue-600"
+  }
+>
+  My Bookings
+</NavLink>
             </li>
             <li className="flex gap-2 items-center">
               <MdFreeCancellation />
-              <NavLink className="font-bold" to="bookingCancellation">Booking Cancellation</NavLink>
+              <NavLink  to="bookingCancellation"  className={({ isActive }) =>
+                  isActive
+                 ? "text-blue-600 underline font-bold"
+                    : "font-bold hover:text-blue-600"
+                } >Booking Cancellation</NavLink>
             </li>
             <li className="flex gap-2 items-center">
               <MdOutlinePayment />
-              <NavLink className="font-bold" to="paymentHistory">Payment History</NavLink>
+              <NavLink to="paymentHistory"  className={({ isActive }) =>
+                  isActive
+                 ? "text-blue-600 underline font-bold"
+                    : "font-bold hover:text-blue-600"
+                }>Payment History</NavLink>
             </li>
           </ul>
         )}
@@ -64,18 +90,38 @@ const DashboardLayout = () => {
         <hr className="my-4" />
         <button
           onClick={() => setAdminMenuOpen(!adminMenuOpen)}
-          className="w-full text-left flex items-center gap-2 font-semibold text-lg mb-3"
+          className="w-full text-left flex items-center text-blue-500 font-bold gap-2  text-lg mb-3"
         >
-          <MdDashboard />
+          <RiAdminFill />
           Admin Dashboard
         </button>
         {adminMenuOpen && role === "admin" && (
           <ul className="space-y-2 ml-4 mt-2">
-            <li><NavLink to="admin">Admin Home</NavLink></li>
-            <li><NavLink to="admin/manageServices">Manage Services</NavLink></li>
-            <li><NavLink to="admin/manageDecorators">Manage Decorators</NavLink></li>
-            <li><NavLink to="admin/manageBookings">Manage Bookings</NavLink></li>
-            <li><NavLink to="admin/analytics">Analytics</NavLink></li>
+            <li><NavLink to="admin"  className={({ isActive }) =>
+                  isActive
+                 ? "text-blue-600 underline font-bold"
+                    : "font-bold hover:text-blue-600"
+                }>Admin Home</NavLink></li>
+            <li><NavLink to="admin/manageServices"  className={({ isActive }) =>
+                  isActive
+                 ? "text-blue-600 underline font-bold"
+                    : "font-bold hover:text-blue-600"
+                }>Manage Services</NavLink></li>
+            <li><NavLink to="admin/manageDecorators"  className={({ isActive }) =>
+                  isActive
+                 ? "text-blue-600 underline font-bold"
+                    : "font-bold hover:text-blue-600"
+                }>Manage Decorators</NavLink></li>
+            <li><NavLink to="admin/manageBookings"  className={({ isActive }) =>
+                  isActive
+                 ? "text-blue-600 underline font-bold"
+                    : "font-bold hover:text-blue-600"
+                }>Manage Bookings</NavLink></li>
+            <li><NavLink to="admin/analytics" className={({ isActive }) =>
+                  isActive
+                 ? "text-blue-600 underline font-bold"
+                    : "font-bold hover:text-blue-600"
+                }>Analytics</NavLink></li>
           </ul>
         )}
 
@@ -83,25 +129,47 @@ const DashboardLayout = () => {
         <hr className="my-4" />
         <button
           onClick={() => setDecoratorMenuOpen(!decoratorMenuOpen)}
-          className="w-full text-left flex items-center gap-2 font-semibold text-lg mb-3"
+          className="w-full text-left flex items-center gap-2 text-blue-500 font-bold text-lg mb-3"
         >
-          <MdDashboard />
+           <GiPaintRoller />
           Decorator Dashboard
         </button>
         {decoratorMenuOpen && (
           <ul className="space-y-2 ml-4 mt-2">
-            <li><NavLink to="decorator/home">Decorator Home</NavLink></li>
-            <li><NavLink to="decorator/assignedProjects">Assigned Projects</NavLink></li>
-            <li><NavLink to="decorator/todaysSchedule">Today Schedule</NavLink></li>
-            <li><NavLink to="decorator/updateStatus">Update Project Status</NavLink></li>
-            <li><NavLink to="decorator/earnings">Earnings Summary</NavLink></li>
+            <li><NavLink to="decorator/home"  className={({ isActive }) =>
+                  isActive
+                 ? "text-blue-600 underline font-bold"
+                    : "font-bold hover:text-blue-600"
+                }>Decorator Home</NavLink></li>
+            <li><NavLink to="decorator/assignedProjects"  className={({ isActive }) =>
+                  isActive
+                 ? "text-blue-600 underline font-bold"
+                    : "font-bold hover:text-blue-600"
+                }>Assigned Projects</NavLink></li>
+            <li><NavLink to="decorator/todaysSchedule"  className={({ isActive }) =>
+                  isActive
+                 ? "text-blue-600 underline font-bold"
+                    : "font-bold hover:text-blue-600"
+                }>Today Schedule</NavLink></li>
+            <li><NavLink to="decorator/updateStatus"  className={({ isActive }) =>
+                  isActive
+                 ? "text-blue-600 underline font-bold"
+                    : "font-bold hover:text-blue-600"
+                }>Update Project Status</NavLink></li>
+            <li><NavLink to="decorator/earnings"  className={({ isActive }) =>
+                  isActive
+                 ? "text-blue-600 underline font-bold"
+                    : "font-bold hover:text-blue-600"
+                }>Earnings Summary</NavLink></li>
           </ul>
         )}
       </aside>
 
       {/* MAIN CONTENT */}
-      <main className="flex-1 p-6">
-        <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+      <main className="flex-1 bg-pink-50 p-6">
+        <h1 className="text-4xl items-center flex font-bold mb-4">
+  Welcome to your Dashboard
+</h1>
         <Outlet />
       </main>
     </div>

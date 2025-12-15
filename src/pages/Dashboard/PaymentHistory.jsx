@@ -13,9 +13,15 @@ const PaymentHistory = () => {
         return res.data;
         }
     })
+   
     return (
         <div>
-           <h2 className='text-4xl'>Payment History: {payments.length}</h2> 
+            <h2 className="text-2xl font-semibold mb-6 flex justify-center sm:justify-start items-center gap-2">
+  Payment History
+  <span className="bg-blue-600 text-white text-sm px-2 py-1 rounded-full">
+     {payments.length}
+  </span>
+</h2> 
            <div className="overflow-x-auto">
   <table className="table table-zebra">
     {/* head */}

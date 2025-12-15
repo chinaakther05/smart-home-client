@@ -1,7 +1,5 @@
-// src/pages/Dashboard/TodaySchedule.jsx
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
-
 import { format, parseISO } from "date-fns";
 import { AuthContext } from "../../context/AuthContext/AuthContext";
 
@@ -24,7 +22,6 @@ const TodaySchedule = () => {
           }
         );
 
-        // আজকের date অনুযায়ী filter
         const todayStr = format(new Date(), "yyyy-MM-dd");
         const filtered = res.data.filter((project) => {
           const projectDate = format(parseISO(project.date), "yyyy-MM-dd");
@@ -43,22 +40,35 @@ const TodaySchedule = () => {
     fetchProjects();
   }, [user]);
 
-  if (loading) return <p>Loading today's projects...</p>;
+  if (loading)
+    return (
+      <div className="flex justify-center py-10">
+        <span className="loading loading-spinner text-primary loading-lg"></span>
+      </div>
+    );
+
   if (error) return <p className="text-red-500">{error}</p>;
-  if (projects.length === 0) return <p>No projects assigned for today.</p>;
+  if (projects.length === 0) return <p className="text-center py-6">No projects assigned for today.</p>;
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl mb-4">Today's Assigned Projects</h2>
-      <ul className="space-y-2">
+    <div className="p-4 space-y-6">
+      {/* Counter Card */}
+      <div className="bg-blue-100 rounded-xl p-6 shadow text-center">
+        <h2 className="text-3xl font-bold text-blue-700">Today's Projects</h2>
+        <p className="text-xl mt-2">{projects.length} Project{projects.length > 1 ? 's' : ''}</p>
+      </div>
+
+      {/* Projects List */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {projects.map((project) => (
-          <li key={project._id} className="border p-2 rounded shadow-sm">
-            <p><strong>Service:</strong> {project.serviceName}</p>
-            <p><strong>Customer:</strong> {project.customerEmail}</p>
-            <p><strong>Status:</strong> {project.status}</p>
-          </li>
+          <div key={project._id} className="bg-white rounded-xl p-4 shadow border">
+            <h3 className="font-semibold text-lg">{project.serviceName}</h3>
+            <p className="text-sm text-gray-500">Client: {project.customerEmail}</p>
+            <p className="text-sm capitalize mt-1">Status: <span className="font-medium">{project.status}</span></p>
+            <p className="text-sm text-gray-400 mt-1">Date: {format(parseISO(project.date), "dd MMM yyyy")}</p>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

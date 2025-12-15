@@ -5,7 +5,7 @@ const About = () => {
         <div className='mt-10 max-w-4xl mx-auto px-6'>
             
             {/* Title */}
-            <h2 className='text-4xl md:text-5xl font-bold text-secondary mb-6'>About Us</h2>
+            <h2 className='text-4xl md:text-5xl font-bold text-black mb-6'>About Us</h2>
             
             {/* Short Intro */}
             <p className='text-gray-700 text-lg md:text-xl leading-relaxed'>
@@ -14,7 +14,7 @@ const About = () => {
             </p>
 
             {/* Sections */}
-            <div className='flex flex-wrap gap-8 mt-10 font-semibold text-secondary'>
+            <div className='flex flex-wrap text-2xl gap-8 mt-10 font-bold text-green-500'>
                 <span className='cursor-pointer hover:text-blue-600 transition'>Story</span>
                 <span className='cursor-pointer hover:text-blue-600 transition'>Mission</span>
                 <span className='cursor-pointer hover:text-blue-600 transition'>Success</span>
