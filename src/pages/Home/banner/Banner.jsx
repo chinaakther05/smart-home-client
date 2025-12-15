@@ -1,9 +1,11 @@
 import React from 'react';
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import banner3 from '../../../assets/home 3.jpg'
-import banner4 from '../../../assets/home 4.jpeg'
-import banner5 from '../../../assets/home 5.jpg'
+
+import banner5 from '../../../assets/banner5.jpg'
+import banner6 from '../../../assets/banner6.jpg'
+import banner7 from '../../../assets/banner7.jpg'
+import banner8 from '../../../assets/banner8.jpg'
 
 const Banner = () => {
     return (
@@ -11,11 +13,15 @@ const Banner = () => {
               showThumbs={false} 
               showStatus={false} >
             <div>
-                <img className='w-full h-[550px] object-cover' src={banner3} alt="Banner 1" />
+                <img className='w-full h-[550px] object-cover' src={banner8} alt="Banner 1" />
                 <p className="legend">Legend 1</p>
             </div>
             <div>
-                <img className='w-full h-[550px] object-cover' src={banner4} alt="Banner 2" />
+                <img className='w-full h-[550px] object-cover' src={banner7} alt="Banner 1" />
+                <p className="legend">Legend 1</p>
+            </div>
+            <div>
+                <img className='w-full h-[550px] object-cover' src={banner6} alt="Banner 2" />
                 <p className="legend">Legend 2</p>
             </div>
             <div>

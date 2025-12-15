@@ -2,11 +2,13 @@ import React from 'react';
 import Banner from '../banner/Banner';
 import HeroSection from '../HeroSection/HeroSection';
 
+
 const Home = () => {
     return (
-        <div className='mt-10 '>
+        <div className='mt-2 '>
           <Banner></Banner> 
           <HeroSection></HeroSection>
+          
         </div>
     );
 };

@@ -48,7 +48,7 @@ const Navbar = () => {
       </> );
 
   return (
-    <div className="navbar bg-base-100 shadow-sm">
+    <div className="navbar bg-indigo-100 shadow-sm">
 
       {/* LEFT */}
       <div className="navbar-start">
