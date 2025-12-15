@@ -92,7 +92,7 @@ const DashboardLayout = () => {
           <ul className="space-y-2 ml-4 mt-2">
             <li><NavLink to="decorator">Decorator Home</NavLink></li>
             <li><NavLink to="decorator/assignedProjects">Assigned Projects</NavLink></li>
-            <li><NavLink to="decorator/todaysSchedule">Today's Schedule</NavLink></li>
+            <li><NavLink to="decorator/todaysSchedule">Today Schedule</NavLink></li>
             <li><NavLink to="decorator/updateStatus">Update Project Status</NavLink></li>
             <li><NavLink to="decorator/earnings">Earnings Summary</NavLink></li>
           </ul>

@@ -18,31 +18,36 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Email/Password Registration
   const registerUser = (email, password) => {
     setLoading(true);
     return createUserWithEmailAndPassword(auth, email, password);
   };
 
+  // Email/Password Login
   const signInUser = (email, password) => {
     setLoading(true);
     return signInWithEmailAndPassword(auth, email, password);
   };
 
+  // Google Login
   const signInGoogle = () => {
     setLoading(true);
     return signInWithPopup(auth, googleProvider);
   };
 
+  // Logout
   const logOut = () => {
     setLoading(true);
     return signOut(auth);
   };
 
+  // Update Firebase Profile
   const updateUserProfile = (profile) => {
     return updateProfile(auth.currentUser, profile);
   };
 
-  // observe user auth state
+  // Observe Firebase Auth state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
@@ -50,18 +55,23 @@ const AuthProvider = ({ children }) => {
 
       if (currentUser?.email) {
         try {
-          const res = await axios.get(`http://localhost:3000/users/${currentUser.email}`);
-          if (!res.data) {
+          // Check if user exists in MongoDB
+          const res = await axios.get(`http://localhost:3000/users/${currentUser.email}/role`);
+          const roleExists = res.data?.role;
+
+          if (!roleExists) {
+            // Add new user if not exists
             await axios.post("http://localhost:3000/users", {
               email: currentUser.email,
               displayName: currentUser.displayName,
               photoURL: currentUser.photoURL,
               role: "user", // default role
+              createAt: new Date()
             });
             console.log("New user added to MongoDB");
           }
         } catch (err) {
-          console.error("Error adding user to MongoDB:", err);
+          console.error("Error syncing user with MongoDB:", err.response?.data || err);
         }
       }
     });

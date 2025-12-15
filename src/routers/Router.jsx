@@ -31,6 +31,11 @@ import ManageDecorators from "../pages/Dashboard/Admin/ManageDecorators";
 import ManageBookings from "../pages/Dashboard/Admin/ManageBookings";
 import Analytics from "../pages/Dashboard/Admin/Analytics";
 
+import TodaySchedule from "../pages/Dashboard/TodaySchedule";
+import UpdateProjectStatus from "../pages/Dashboard/decorator/UpdateProjectStatus";
+import EarningsSummary from "../pages/Dashboard/decorator/EarningsSummary";
+import AssignedProjects from "../pages/Dashboard/decorator/AssignedProjects";
+
 
 
 
@@ -132,6 +137,22 @@ export const router = createBrowserRouter([
     {
       path: 'admin/analytics',
       Component: Analytics
+    },
+    {
+      path: "decorator/assignedProjects",
+      Component: AssignedProjects
+    },
+    {
+      path: "decorator/todaysSchedule",
+      Component: TodaySchedule
+    },
+    {
+      path: "decorator/updateStatus",
+      Component: UpdateProjectStatus
+    },
+    {
+      path: "decorator/earnings",
+      Component: EarningsSummary
     }
     
 

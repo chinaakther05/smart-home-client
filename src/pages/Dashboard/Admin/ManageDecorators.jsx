@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
- // path ঠিক করে নিতে হবে
 
 const ManageDecorators = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const axiosSecure = useAxiosSecure();
 
+  // Load all users
   useEffect(() => {
     axiosSecure.get("/users")
       .then(res => {
@@ -20,6 +20,7 @@ const ManageDecorators = () => {
       });
   }, [axiosSecure]);
 
+  // Make user a Decorator
   const handleMakeDecorator = (id) => {
     Swal.fire({
       title: "Make Decorator?",
@@ -34,14 +35,37 @@ const ManageDecorators = () => {
             setUsers(prev => prev.map(user =>
               user._id === id ? { ...user, role: "decorator" } : user
             ));
-          });
+          })
+          .catch(err => console.error(err));
       }
     });
   };
 
-  const handleRemoveDecorator = (id) => {
+  // Make user an Admin
+  const handleMakeAdmin = (id) => {
     Swal.fire({
-      title: "Remove Decorator?",
+      title: "Make Admin?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes"
+    }).then(result => {
+      if (result.isConfirmed) {
+        axiosSecure.patch(`/users/${id}/role`, { role: "admin" })
+          .then(() => {
+            Swal.fire("Success", "User is now an Admin", "success");
+            setUsers(prev => prev.map(user =>
+              user._id === id ? { ...user, role: "admin" } : user
+            ));
+          })
+          .catch(err => console.error(err));
+      }
+    });
+  };
+
+  // Remove Decorator/Admin (set back to user)
+  const handleRemoveRole = (id) => {
+    Swal.fire({
+      title: "Remove role?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Yes"
@@ -49,11 +73,12 @@ const ManageDecorators = () => {
       if (result.isConfirmed) {
         axiosSecure.patch(`/users/${id}/role`, { role: "user" })
           .then(() => {
-            Swal.fire("Removed", "Decorator role removed", "success");
+            Swal.fire("Removed", "User role removed", "success");
             setUsers(prev => prev.map(user =>
               user._id === id ? { ...user, role: "user" } : user
             ));
-          });
+          })
+          .catch(err => console.error(err));
       }
     });
   };
@@ -62,17 +87,17 @@ const ManageDecorators = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Manage Decorators</h1>
+      <h1 className="text-2xl font-bold mb-4">Manage Users</h1>
 
-      <table className="table w-full">
+      <table className="table w-full border">
         <thead>
-          <tr>
+          <tr className="bg-gray-100">
             <th>#</th>
             <th>Photo</th>
             <th>Name</th>
             <th>Email</th>
             <th>Role</th>
-            <th>Action</th>
+            <th>Actions</th>
           </tr>
         </thead>
 
@@ -84,11 +109,38 @@ const ManageDecorators = () => {
               <td>{user.displayName}</td>
               <td>{user.email}</td>
               <td className="capitalize">{user.role}</td>
-              <td>
-                {user.role === "decorator" ? (
-                  <button onClick={() => handleRemoveDecorator(user._id)} className="btn btn-sm btn-error">Remove</button>
-                ) : (
-                  <button onClick={() => handleMakeDecorator(user._id)} className="btn btn-sm btn-success">Make Decorator</button>
+              <td className="flex gap-2">
+                {user.role === "user" && (
+                  <>
+                    <button
+                      onClick={() => handleMakeDecorator(user._id)}
+                      className="btn btn-sm btn-success"
+                    >
+                      Make Decorator
+                    </button>
+                    <button
+                      onClick={() => handleMakeAdmin(user._id)}
+                      className="btn btn-sm btn-primary"
+                    >
+                      Make Admin
+                    </button>
+                  </>
+                )}
+                {user.role === "decorator" && (
+                  <button
+                    onClick={() => handleRemoveRole(user._id)}
+                    className="btn btn-sm btn-error"
+                  >
+                    Remove Decorator
+                  </button>
+                )}
+                {user.role === "admin" && (
+                  <button
+                    onClick={() => handleRemoveRole(user._id)}
+                    className="btn btn-sm btn-error"
+                  >
+                    Remove Admin
+                  </button>
                 )}
               </td>
             </tr>

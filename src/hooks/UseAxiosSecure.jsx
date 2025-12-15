@@ -1,27 +1,33 @@
 // useAxiosSecure.js
-import axios from "axios";
 import { useEffect } from "react";
+import axios from "axios";
 import useAuth from "./useAuth";
 
 const axiosSecure = axios.create({
   baseURL: "http://localhost:3000/",
 });
 
-const useAxiosSecure = () => {   
+const useAxiosSecure = () => {
   const { user } = useAuth();
 
   useEffect(() => {
+    // Interceptor to attach Firebase token
     const requestInterceptor = axiosSecure.interceptors.request.use(
       async (config) => {
         if (user) {
-          const token = await user.getIdToken(); 
-          config.headers.Authorization = `Bearer ${token}`;
+          try {
+            const token = await user.getIdToken();
+            config.headers.Authorization = `Bearer ${token}`;
+          } catch (error) {
+            console.error("Failed to get token:", error);
+          }
         }
         return config;
       },
       (error) => Promise.reject(error)
     );
 
+    // Cleanup interceptor on unmount
     return () => {
       axiosSecure.interceptors.request.eject(requestInterceptor);
     };
