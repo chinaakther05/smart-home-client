@@ -15,7 +15,7 @@ const UpdateProjectStatus = () => {
       try {
         const token = await user.getIdToken();
         const res = await axios.get(
-          `http://localhost:3000/projects/assigned/${user.email}`,
+          `https://smart-home-server-five.vercel.app/projects/assigned/${user.email}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setProjects(res.data);
@@ -37,7 +37,7 @@ const UpdateProjectStatus = () => {
     try {
       const token = await user.getIdToken();
       await axios.patch(
-        `http://localhost:3000/projects/${projectId}/status`,
+        `https://smart-home-server-five.vercel.app/projects/${projectId}/status`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );

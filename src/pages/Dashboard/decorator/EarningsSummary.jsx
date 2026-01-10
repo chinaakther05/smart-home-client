@@ -15,7 +15,7 @@ const EarningsSummary = () => {
       try {
         const token = await user.getIdToken();
         const res = await axios.get(
-          `http://localhost:3000/payment?email=${user.email}`,
+          `https://smart-home-server-five.vercel.app/payment?email=${user.email}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setPayments(res.data);

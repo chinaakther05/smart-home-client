@@ -17,7 +17,7 @@ const ServiceDetails = () => {
   // Fetch service details
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:3000/services/${id}`)
+    fetch(`https://smart-home-server-five.vercel.app/services/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setService(data);
@@ -80,7 +80,7 @@ const ServiceDetails = () => {
     };
 
     try {
-      const res = await fetch("http://localhost:3000/bookings", {
+      const res = await fetch("https://smart-home-server-five.vercel.app/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(booking),

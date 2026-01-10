@@ -9,7 +9,7 @@ const TopServices = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:3000/services")
+    axios.get("https://smart-home-server-five.vercel.app/services")
       .then(res => setServices(res.data))
       .catch(err => setError("Failed to load services"))
       .finally(() => setLoading(false));

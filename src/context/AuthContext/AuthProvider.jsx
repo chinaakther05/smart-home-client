@@ -56,12 +56,12 @@ const AuthProvider = ({ children }) => {
       if (currentUser?.email) {
         try {
           // Check if user exists in MongoDB
-          const res = await axios.get(`http://localhost:3000/users/${currentUser.email}/role`);
+          const res = await axios.get(`https://smart-home-server-five.vercel.app/users/${currentUser.email}/role`);
           const roleExists = res.data?.role;
 
           if (!roleExists) {
             // Add new user if not exists
-            await axios.post("http://localhost:3000/users", {
+            await axios.post("https://smart-home-server-five.vercel.app/users", {
               email: currentUser.email,
               displayName: currentUser.displayName,
               photoURL: currentUser.photoURL,

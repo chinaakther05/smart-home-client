@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
+import { Link } from "react-router";
 
 const AssignProject = () => {
   const axiosSecure = useAxiosSecure();
@@ -90,7 +91,8 @@ const AssignProject = () => {
               type="submit"
               className="w-full bg-blue-600 text-white py-2 rounded-md font-semibold hover:bg-blue-700 transition-colors"
             >
-              Assign Project
+              <Link to='decorator/todaysSchedule'>Assign Project</Link>
+              
             </button>
           </form>
         )}

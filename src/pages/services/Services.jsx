@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom"; // react-router-dom ব্যবহার করা উচিত
+import { Link } from "react-router-dom"; 
 
 const Services = () => {
   const [services, setServices] = useState([]);
@@ -10,7 +10,7 @@ const Services = () => {
 
   // Load services from backend
   useEffect(() => {
-    fetch("http://localhost:3000/services")
+    fetch("https://smart-home-server-five.vercel.app/services")
       .then((res) => res.json())
       .then((data) => setServices(data))
       .catch((err) => console.error("Failed to fetch services:", err));
@@ -33,7 +33,7 @@ const Services = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       {/* Search + Filter */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
         <input
           type="text"
           placeholder="Search service..."

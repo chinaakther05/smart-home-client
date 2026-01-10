@@ -16,7 +16,7 @@ const TodaySchedule = () => {
       try {
         const token = await user.getIdToken();
         const res = await axios.get(
-          `http://localhost:3000/projects/assigned/${user.email}`,
+          `https://smart-home-server-five.vercel.app/projects/assigned/${user.email}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

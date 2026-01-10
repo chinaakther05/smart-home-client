@@ -7,7 +7,7 @@ const Users = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios.get('http://localhost:3000/users')
+        axios.get('https://smart-home-server-five.vercel.app/users')
             .then(res => {
                 console.log("Users from backend:", res.data);
                 setUsers(res.data);

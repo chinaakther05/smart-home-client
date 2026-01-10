@@ -7,7 +7,7 @@ const MyProfile = () => {
 
   useEffect(() => {
     if (user?.email) {
-      fetch(`http://localhost:3000/users/${user.email}`)
+      fetch(`https://smart-home-server-five.vercel.app/users/${user.email}`)
         .then((res) => res.json())
         .then((data) => setUserData(data));
     }
