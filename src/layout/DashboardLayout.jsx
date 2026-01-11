@@ -1,7 +1,19 @@
 // src/layouts/DashboardLayout.jsx
 import React, { useEffect, useState } from "react";
-import { NavLink, Outlet, Navigate } from "react-router-dom";
-import { MdBrowserUpdated, MdDashboard, MdDesignServices, MdFreeCancellation, MdHomeWork, MdOutlinePayment, MdSchedule } from "react-icons/md";
+import { NavLink, Outlet, Navigate, useLocation } from "react-router-dom";
+import { 
+  MdBrowserUpdated, 
+  MdDashboard, 
+  MdDesignServices, 
+  MdFreeCancellation, 
+  MdHomeWork, 
+  MdOutlinePayment, 
+  MdSchedule,
+  MdMenu,
+  MdClose,
+  MdChevronRight,
+  MdChevronDown
+} from "react-icons/md";
 import { ImProfile } from "react-icons/im";
 import { TbBrandBooking } from "react-icons/tb";
 import { FcHome } from "react-icons/fc";
@@ -9,14 +21,16 @@ import { RiAdminFill } from "react-icons/ri";
 import { GiPaintRoller } from "react-icons/gi";
 import useAuth from "../hooks/useAuth";
 import { GoProjectSymlink } from "react-icons/go";
-import { FaChartBar, FaMoneyBillWave } from "react-icons/fa";
+import { FaChartBar, FaMoneyBillWave, FaSignOutAlt } from "react-icons/fa";
 
 const DashboardLayout = () => {
-  const { user } = useAuth();
+  const { user, logOut } = useAuth();
   const [role, setRole] = useState("");
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(true);
   const [adminMenuOpen, setAdminMenuOpen] = useState(false);
   const [decoratorMenuOpen, setDecoratorMenuOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const location = useLocation();
 
   // Fetch role from server
   useEffect(() => {
@@ -31,264 +45,482 @@ const DashboardLayout = () => {
   // Prevent access if not logged in
   if (!user) return <Navigate to="/login" />;
 
+  const handleLogout = () => {
+    logOut()
+      .then(() => {})
+      .catch(error => console.error(error));
+  };
+
+  // Get user initials for avatar
+  const getUserInitials = () => {
+    if (user?.displayName) {
+      return user.displayName
+        .split(' ')
+        .map(n => n[0])
+        .join('')
+        .toUpperCase();
+    }
+    return user?.email?.[0]?.toUpperCase() || 'U';
+  };
+
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-green-50">
+      {/* Mobile Sidebar Toggle */}
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-green-600 text-white rounded-lg shadow-lg"
+      >
+        {sidebarOpen ? <MdClose size={24} /> : <MdMenu size={24} />}
+      </button>
+
       {/* SIDEBAR */}
-      <aside className="w-64 bg-green-50 p-4 border-r">
-        {/* HOME */}
-        <NavLink className="flex items-center gap-2 mb-4" to="/">
-          <FcHome size={24} />
-          <span className="text-3xl font-bold">Home Page</span>
-        </NavLink>
+      <aside className={`
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        fixed lg:static inset-y-0 left-0 z-40
+        w-72 bg-gradient-to-b from-green-900 to-green-800 text-white
+        p-6 border-r border-green-700 shadow-2xl
+        transition-transform duration-300 ease-in-out
+      `}>
+        {/* Close button for mobile */}
+        <div className="lg:hidden absolute top-4 right-4">
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="p-1 rounded-full hover:bg-green-700"
+          >
+            <MdClose size={20} />
+          </button>
+        </div>
 
-        {/* USER DASHBOARD */}
-        <button
-          onClick={() => setUserMenuOpen(!userMenuOpen)}
-          className="w-full text-left flex items-center gap-2 mt-3 text-green-500 font-bold text-lg mb-3"
-        >
-          <MdDashboard />
-          User Dashboard
-        </button>
-        {userMenuOpen && (
-          <ul className="space-y-2 ml-4 mt-2">
-            <li className="flex gap-2 items-center">
-              <ImProfile />
-              <NavLink
-                to="profile"
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-blue-600 underline font-bold"
-                    : "font-bold hover:text-blue-600"
-                }
-              >
-                My Profile
-              </NavLink>
-            </li>
-            <li className="flex gap-2 items-center">
-              <TbBrandBooking />
-              <NavLink
-                to="myBookings"
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-blue-600 underline font-bold"
-                    : "font-bold hover:text-blue-600"
-                }
-              >
-                My Bookings
-              </NavLink>
-            </li>
-            <li className="flex gap-2 items-center">
-              <MdFreeCancellation />
-              <NavLink
-                to="bookingCancellation"
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-blue-600 underline font-bold"
-                    : "font-bold hover:text-blue-600"
-                }
-              >
-                Booking Cancellation
-              </NavLink>
-            </li>
-            <li className="flex gap-2 items-center">
-              <MdOutlinePayment />
-              <NavLink
-                to="paymentHistory"
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-blue-600 underline font-bold"
-                    : "font-bold hover:text-blue-600"
-                }
-              >
-                Payment History
-              </NavLink>
-            </li>
-          </ul>
-        )}
+        {/* Brand Logo */}
+        <div className="mb-10">
+          <NavLink 
+            to="/" 
+            className="flex items-center gap-3 hover:opacity-90 transition"
+          >
+            <div className="p-2 bg-white rounded-lg">
+              <FcHome size={28} />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-green-300">
+                SmartHome Decor
+              </h1>
+              <p className="text-green-200 text-sm">Dashboard</p>
+            </div>
+          </NavLink>
+        </div>
 
-        {/* ADMIN DASHBOARD */}
-        {role === "admin" && (
-          <>
-            <hr className="my-4" />
+        {/* User Profile Card */}
+        <div className="mb-8 p-4 bg-green-800/50 rounded-xl backdrop-blur-sm border border-green-700">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-r from-yellow-400 to-green-400 flex items-center justify-center font-bold text-lg">
+              {getUserInitials()}
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold truncate">{user?.displayName || 'User'}</h3>
+              <p className="text-green-200 text-sm truncate">{user?.email}</p>
+            </div>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="px-3 py-1 bg-green-700 rounded-full text-xs font-medium">
+              {role === 'admin' ? 'Administrator' : 
+               role === 'decorator' ? 'Decorator' : 
+               'Customer'}
+            </span>
             <button
-              onClick={() => setAdminMenuOpen(!adminMenuOpen)}
-              className="w-full text-left flex items-center text-green-500 font-bold gap-2 text-lg mb-3"
+              onClick={handleLogout}
+              className="flex items-center gap-2 text-sm hover:text-yellow-300 transition"
             >
-              <RiAdminFill />
-              Admin Dashboard
+              <FaSignOutAlt /> Logout
             </button>
-            {adminMenuOpen && (
-              <ul className="space-y-2 ml-4 mt-2">
-                <li>
+          </div>
+        </div>
+
+        {/* Navigation Sections */}
+        <nav className="space-y-6">
+          {/* USER DASHBOARD */}
+          <div className="space-y-2">
+            <button
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
+              className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-green-700 transition group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-600 rounded-lg">
+                  <MdDashboard className="text-white" size={20} />
+                </div>
+                <span className="font-semibold">User Dashboard</span>
+              </div>
+              {userMenuOpen ? <MdChevronDown /> : <MdChevronRight />}
+            </button>
+            
+            {userMenuOpen && (
+              <div className="ml-4 pl-8 space-y-2 border-l border-green-600">
+                <NavLink
+                  to="profile"
+                  onClick={() => setSidebarOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 p-3 rounded-lg transition ${
+                      isActive 
+                        ? 'bg-green-700 text-yellow-300 shadow-inner' 
+                        : 'hover:bg-green-700/50'
+                    }`
+                  }
+                >
+                  <ImProfile size={18} />
+                  <span>My Profile</span>
+                </NavLink>
+                
+                <NavLink
+                  to="myBookings"
+                  onClick={() => setSidebarOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 p-3 rounded-lg transition ${
+                      isActive 
+                        ? 'bg-green-700 text-yellow-300 shadow-inner' 
+                        : 'hover:bg-green-700/50'
+                    }`
+                  }
+                >
+                  <TbBrandBooking size={18} />
+                  <span>My Bookings</span>
+                </NavLink>
+                
+                <NavLink
+                  to="bookingCancellation"
+                  onClick={() => setSidebarOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 p-3 rounded-lg transition ${
+                      isActive 
+                        ? 'bg-green-700 text-yellow-300 shadow-inner' 
+                        : 'hover:bg-green-700/50'
+                    }`
+                  }
+                >
+                  <MdFreeCancellation size={18} />
+                  <span>Booking Cancellation</span>
+                </NavLink>
+                
+                <NavLink
+                  to="paymentHistory"
+                  onClick={() => setSidebarOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 p-3 rounded-lg transition ${
+                      isActive 
+                        ? 'bg-green-700 text-yellow-300 shadow-inner' 
+                        : 'hover:bg-green-700/50'
+                    }`
+                  }
+                >
+                  <MdOutlinePayment size={18} />
+                  <span>Payment History</span>
+                </NavLink>
+              </div>
+            )}
+          </div>
+
+          {/* ADMIN DASHBOARD */}
+          {role === "admin" && (
+            <div className="space-y-2">
+              <button
+                onClick={() => setAdminMenuOpen(!adminMenuOpen)}
+                className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-green-700 transition"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-red-600 rounded-lg">
+                    <RiAdminFill className="text-white" size={20} />
+                  </div>
+                  <span className="font-semibold">Admin Dashboard</span>
+                </div>
+                {adminMenuOpen ? <MdChevronDown /> : <MdChevronRight />}
+              </button>
+              
+              {adminMenuOpen && (
+                <div className="ml-4 pl-8 space-y-2 border-l border-green-600">
                   <NavLink
                     to="admin"
+                    onClick={() => setSidebarOpen(false)}
                     className={({ isActive }) =>
-    `flex items-center gap-2 font-bold hover:text-blue-600 ${
-      isActive ? "text-blue-600 underline" : ""
-    }`
-  }
+                      `flex items-center gap-3 p-3 rounded-lg transition ${
+                        isActive 
+                          ? 'bg-green-700 text-yellow-300 shadow-inner' 
+                          : 'hover:bg-green-700/50'
+                      }`
+                    }
                   >
-                    <RiAdminFill/>
-                    Admin Home
+                    <RiAdminFill size={18} />
+                    <span>Admin Home</span>
                   </NavLink>
-                </li>
-                <li>
+                  
                   <NavLink
                     to="admin/manageServices"
+                    onClick={() => setSidebarOpen(false)}
                     className={({ isActive }) =>
-    `flex items-center gap-2 font-bold hover:text-blue-600 ${
-      isActive ? "text-blue-600 underline" : ""
-    }`
-  }
+                      `flex items-center gap-3 p-3 rounded-lg transition ${
+                        isActive 
+                          ? 'bg-green-700 text-yellow-300 shadow-inner' 
+                          : 'hover:bg-green-700/50'
+                      }`
+                    }
                   >
-                     <MdDesignServices/>
-                    Manage Services
+                    <MdDesignServices size={18} />
+                    <span>Manage Services</span>
                   </NavLink>
-                </li>
-                <li>
+                  
                   <NavLink
                     to="admin/manageDecorators"
-                       className={({ isActive }) =>
-    `flex items-center gap-2 font-bold hover:text-blue-600 ${
-      isActive ? "text-blue-600 underline" : ""
-    }`
-  }
-    
+                    onClick={() => setSidebarOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 p-3 rounded-lg transition ${
+                        isActive 
+                          ? 'bg-green-700 text-yellow-300 shadow-inner' 
+                          : 'hover:bg-green-700/50'
+                      }`
+                    }
                   >
-                    <GiPaintRoller/>
-                    Manage Decorators
+                    <GiPaintRoller size={18} />
+                    <span>Manage Decorators</span>
                   </NavLink>
-                </li>
-                <li>
+                  
                   <NavLink
                     to="admin/manageBookings"
-                       className={({ isActive }) =>
-    `flex items-center gap-2 font-bold hover:text-blue-600 ${
-      isActive ? "text-blue-600 underline" : ""
-    }`
-  }
-    
+                    onClick={() => setSidebarOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 p-3 rounded-lg transition ${
+                        isActive 
+                          ? 'bg-green-700 text-yellow-300 shadow-inner' 
+                          : 'hover:bg-green-700/50'
+                      }`
+                    }
                   >
-                    <TbBrandBooking/>
-                    Manage Bookings
+                    <TbBrandBooking size={18} />
+                    <span>Manage Bookings</span>
                   </NavLink>
-                </li>
-                <li>
+                  
                   <NavLink
                     to="admin/analytics"
-                   className={({ isActive }) =>
-    `flex items-center gap-2 font-bold hover:text-blue-600 ${
-      isActive ? "text-blue-600 underline" : ""
-    }`
-  }
+                    onClick={() => setSidebarOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 p-3 rounded-lg transition ${
+                        isActive 
+                          ? 'bg-green-700 text-yellow-300 shadow-inner' 
+                          : 'hover:bg-green-700/50'
+                      }`
+                    }
                   >
-                    <FaChartBar />
-                    Analytics
+                    <FaChartBar size={18} />
+                    <span>Analytics</span>
                   </NavLink>
-                </li>
-              </ul>
-            )}
-          </>
-        )}
+                </div>
+              )}
+            </div>
+          )}
 
-        {/* DECORATOR DASHBOARD */}
-        {(role === "decorator" || role === "admin") && (
-          <>
-            <hr className="my-4" />
-            <button
-              onClick={() => setDecoratorMenuOpen(!decoratorMenuOpen)}
-              className="w-full text-left flex items-center gap-2 text-green-500 font-bold text-lg mb-3"
-            >
-              <GiPaintRoller />
-              Decorator Dashboard
-            </button>
-            {decoratorMenuOpen && (
-              <ul className="space-y-2 ml-4 mt-2">
-                <li>
-                 <NavLink
-  to="decorator/home"
-  className={({ isActive }) =>
-    `flex items-center gap-2 font-bold hover:text-blue-600 ${
-      isActive ? "text-blue-600 underline" : ""
-    }`
-  }
->
-  <MdHomeWork size={20} />
-  Decorator Home
-</NavLink>
-                </li>
-                <li>
+          {/* DECORATOR DASHBOARD */}
+          {(role === "decorator" || role === "admin") && (
+            <div className="space-y-2">
+              <button
+                onClick={() => setDecoratorMenuOpen(!decoratorMenuOpen)}
+                className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-green-700 transition"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-purple-600 rounded-lg">
+                    <GiPaintRoller className="text-white" size={20} />
+                  </div>
+                  <span className="font-semibold">Decorator Dashboard</span>
+                </div>
+                {decoratorMenuOpen ? <MdChevronDown /> : <MdChevronRight />}
+              </button>
+              
+              {decoratorMenuOpen && (
+                <div className="ml-4 pl-8 space-y-2 border-l border-green-600">
+                  <NavLink
+                    to="decorator/home"
+                    onClick={() => setSidebarOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 p-3 rounded-lg transition ${
+                        isActive 
+                          ? 'bg-green-700 text-yellow-300 shadow-inner' 
+                          : 'hover:bg-green-700/50'
+                      }`
+                    }
+                  >
+                    <MdHomeWork size={18} />
+                    <span>Decorator Home</span>
+                  </NavLink>
+                  
                   <NavLink
                     to="decorator/assignedProjects"
+                    onClick={() => setSidebarOpen(false)}
                     className={({ isActive }) =>
-    `flex items-center gap-2 font-bold hover:text-blue-600 ${
-      isActive ? "text-blue-600 underline" : ""
-    }`
-  }
+                      `flex items-center gap-3 p-3 rounded-lg transition ${
+                        isActive 
+                          ? 'bg-green-700 text-yellow-300 shadow-inner' 
+                          : 'hover:bg-green-700/50'
+                      }`
+                    }
                   >
-                    <GoProjectSymlink />
-                    Assigned Projects
+                    <GoProjectSymlink size={18} />
+                    <span>Assigned Projects</span>
                   </NavLink>
-                </li>
-                <li>
+                  
                   <NavLink
                     to="decorator/todaysSchedule"
+                    onClick={() => setSidebarOpen(false)}
                     className={({ isActive }) =>
-    `flex items-center gap-2 font-bold hover:text-blue-600 ${
-      isActive ? "text-blue-600 underline" : ""
-    }`
-  }
+                      `flex items-center gap-3 p-3 rounded-lg transition ${
+                        isActive 
+                          ? 'bg-green-700 text-yellow-300 shadow-inner' 
+                          : 'hover:bg-green-700/50'
+                      }`
+                    }
                   >
-                    <MdSchedule />
-                    Today Schedule
+                    <MdSchedule size={18} />
+                    <span>Today's Schedule</span>
                   </NavLink>
-                </li>
-                <li>
+                  
                   <NavLink
                     to="decorator/updateStatus"
-                     className={({ isActive }) =>
-    `flex items-center gap-2 font-bold hover:text-blue-600 ${
-      isActive ? "text-blue-600 underline" : ""
-    }`
-  }
+                    onClick={() => setSidebarOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 p-3 rounded-lg transition ${
+                        isActive 
+                          ? 'bg-green-700 text-yellow-300 shadow-inner' 
+                          : 'hover:bg-green-700/50'
+                      }`
+                    }
                   >
-                    <MdBrowserUpdated />
-                    Update Project Status
+                    <MdBrowserUpdated size={18} />
+                    <span>Update Project Status</span>
                   </NavLink>
-                </li>
-                <li>
+                  
                   <NavLink
                     to="decorator/earnings"
-                   className={({ isActive }) =>
-    `flex items-center gap-2 font-bold hover:text-blue-600 ${
-      isActive ? "text-blue-600 underline" : ""
-    }`
-  }
+                    onClick={() => setSidebarOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 p-3 rounded-lg transition ${
+                        isActive 
+                          ? 'bg-green-700 text-yellow-300 shadow-inner' 
+                          : 'hover:bg-green-700/50'
+                      }`
+                    }
                   >
-                    <FaMoneyBillWave />
-                    Earnings Summary
+                    <FaMoneyBillWave size={18} />
+                    <span>Earnings Summary</span>
                   </NavLink>
-                </li>
-              </ul>
-            )}
-          </>
-        )}
+                </div>
+              )}
+            </div>
+          )}
+        </nav>
+
+        {/* Current Date */}
+        <div className="mt-12 pt-6 border-t border-green-700">
+          <div className="text-center">
+            <p className="text-green-200 text-sm">
+              {new Date().toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </p>
+          </div>
+        </div>
       </aside>
 
       {/* MAIN CONTENT */}
-      <main className="flex-1 bg-pink-50 p-6">
-        <h1 className="text-5xl font-bold mb-6 text-center flex flex-col items-center justify-center gap-2">
-  👋 Welcome, {user?.displayName}!
-  <span className="text-2xl font-medium text-green-400">
-    Today is {new Date().toLocaleDateString("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-    })}
-  </span>
-</h1>
+      <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-x-hidden">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
+                Welcome back, <span className="text-green-600">{user?.displayName?.split(' ')[0] || 'User'}!</span>
+              </h1>
+              <p className="text-gray-600 mt-2">
+                Here's what's happening with your account today.
+              </p>
+            </div>
+            <div className="hidden lg:block text-right">
+              <p className="text-sm text-gray-500">Current Page</p>
+              <p className="text-lg font-semibold text-green-600 capitalize">
+                {location.pathname.split('/').pop()?.replace(/([A-Z])/g, ' $1') || 'Dashboard'}
+              </p>
+            </div>
+          </div>
 
-        <Outlet />
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-500 text-sm">Your Role</p>
+                  <p className="text-xl font-bold text-gray-800 mt-1">
+                    {role === 'admin' ? 'Administrator' : 
+                     role === 'decorator' ? 'Decorator' : 
+                     'Customer'}
+                  </p>
+                </div>
+                <div className="p-3 bg-green-100 rounded-full">
+                  <RiAdminFill className="text-green-600" size={24} />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-500 text-sm">Today's Date</p>
+                  <p className="text-xl font-bold text-gray-800 mt-1">
+                    {new Date().toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric'
+                    })}
+                  </p>
+                </div>
+                <div className="p-3 bg-blue-100 rounded-full">
+                  <MdSchedule className="text-blue-600" size={24} />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-500 text-sm">Active Status</p>
+                  <p className="text-xl font-bold text-gray-800 mt-1">Online</p>
+                </div>
+                <div className="p-3 bg-green-100 rounded-full">
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-500 text-sm">Account Created</p>
+                  <p className="text-xl font-bold text-gray-800 mt-1">
+                    {user?.metadata?.creationTime 
+                      ? new Date(user.metadata.creationTime).toLocaleDateString('en-US', {
+                          month: 'short',
+                          year: 'numeric'
+                        })
+                      : 'N/A'}
+                  </p>
+                </div>
+                <div className="p-3 bg-purple-100 rounded-full">
+                  <ImProfile className="text-purple-600" size={24} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Content Area */}
+        <div className="bg-white rounded-3xl shadow-xl p-6 md:p-8 border border-gray-100 min-h-[calc(100vh-300px)]">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

@@ -34,6 +34,11 @@ const Navbar = () => {
                         ? "text-blue-600 underline font-bold"
                         : "font-bold hover:text-blue-600"
                     }>About Us</NavLink></li>
+   <li><NavLink to="/contact" className={({ isActive }) =>
+                      isActive
+                        ? "text-blue-600 underline font-bold"
+                        : "font-bold hover:text-blue-600"
+                    }>Contact</NavLink></li>
     <li><NavLink to="/coverage" className={({ isActive }) =>
                       isActive
                         ? "text-blue-600 underline font-bold"

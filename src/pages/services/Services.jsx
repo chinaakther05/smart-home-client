@@ -7,13 +7,21 @@ const Services = () => {
   const [filterType, setFilterType] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+  const [loading, setLoading] = useState(true);
 
   // Load services from backend
   useEffect(() => {
+    setLoading(true);
     fetch("https://smart-home-server-five.vercel.app/services")
       .then((res) => res.json())
-      .then((data) => setServices(data))
-      .catch((err) => console.error("Failed to fetch services:", err));
+      .then((data) => {
+        setServices(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch services:", err);
+        setLoading(false);
+      });
   }, []);
 
   // Filter logic
@@ -30,83 +38,246 @@ const Services = () => {
     return matchName && matchType && matchMin && matchMax;
   });
 
+  // Service type colors
+  const getTypeColor = (type) => {
+    switch (type?.toLowerCase()) {
+      case "home":
+        return "bg-green-100 text-green-800 border-green-300";
+      case "wedding":
+        return "bg-pink-100 text-pink-800 border-pink-300";
+      case "event":
+        return "bg-blue-100 text-blue-800 border-blue-300";
+      case "office":
+        return "bg-purple-100 text-purple-800 border-purple-300";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-300";
+    }
+  };
+
+  // Reset filters
+  const resetFilters = () => {
+    setSearch("");
+    setFilterType("");
+    setMinPrice("");
+    setMaxPrice("");
+  };
+
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      {/* Search + Filter */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <input
-          type="text"
-          placeholder="Search service..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="input input-bordered w-full"
-        />
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-4 md:py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Page Header */}
+        <div className="text-center mb-10">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">
+            Our <span className="text-green-600">Services</span>
+          </h1>
+          
+        </div>
 
-        <select
-          className="select select-bordered"
-          value={filterType}
-          onChange={(e) => setFilterType(e.target.value)}
-        >
-          <option value="">All Types</option>
-          <option value="home">Home Decoration</option>
-          <option value="wedding">Wedding Decoration</option>
-          <option value="event">Event Decoration</option>
-          <option value="office">Office Decoration</option>
-        </select>
+        {/* Search + Filter Section */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Search Services
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search by name..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                />
+                <div className="absolute left-3 top-3.5">
+                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
 
-        <input
-          type="number"
-          placeholder="Min Price"
-          className="input input-bordered"
-          value={minPrice}
-          onChange={(e) => setMinPrice(e.target.value)}
-        />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Service Type
+              </label>
+              <select
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition appearance-none"
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}
+              >
+                <option value="">All Types</option>
+                <option value="home">Home Decoration</option>
+                <option value="wedding">Wedding Decoration</option>
+                <option value="event">Event Decoration</option>
+                <option value="office">Office Decoration</option>
+              </select>
+            </div>
 
-        <input
-          type="number"
-          placeholder="Max Price"
-          className="input input-bordered"
-          value={maxPrice}
-          onChange={(e) => setMaxPrice(e.target.value)}
-        />
-      </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Price Range
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  placeholder="Min"
+                  className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(e.target.value)}
+                />
+                <span className="self-center text-gray-500">-</span>
+                <input
+                  type="number"
+                  placeholder="Max"
+                  className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                />
+              </div>
+            </div>
 
-      {/* Service Cards */}
-     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-  {filteredServices.map((service) => (
-    <div key={service._id} className="card bg-white h-[400px] shadow-xl">
-      <figure>
-        <img
-          src={service?.image || "https://via.placeholder.com/400x200"}
-          alt={service?.serviceName || "Service Image"}
-          className="h-60 w-full object-cover"
-        />
-      </figure>
+            <div className="flex items-end">
+              <button
+                onClick={resetFilters}
+                className="w-full px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition"
+              >
+                Reset Filters
+              </button>
+            </div>
+          </div>
+        </div>
 
-      <div className="card-body">
-        <h2 className="card-title mt-4">{service?.serviceName || "Unnamed Service"}</h2>
-        <p>Type: {service?.type || "N/A"}</p>
-        <p className="font-bold text-primary">
-          Price: {service?.price?.toLocaleString("en-BD") || 0} BDT ({service?.unit || "N/A"})
-        </p>
+        {/* Results Summary */}
+        <div className="flex justify-between items-center mb-6">
+          <p className="text-gray-600">
+            Showing <span className="font-bold text-green-600">{filteredServices.length}</span> services
+            {search && <span> for "<span className="font-semibold">{search}</span>"</span>}
+          </p>
+          <div className="text-sm text-gray-500">
+            {services.length} total services available
+          </div>
+        </div>
 
-        <div className="card-actions justify-end">
+        {/* Loading State */}
+        {loading && (
+          <div className="flex justify-center items-center h-64">
+            <div className="text-center">
+              <div className="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading services...</p>
+            </div>
+          </div>
+        )}
+
+        {/* Service Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {!loading && filteredServices.map((service) => (
+            <div 
+              key={service._id} 
+              className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden group"
+            >
+              {/* Image Section */}
+              <div className="relative overflow-hidden h-56">
+                <img
+                  src={service?.image || "https://images.unsplash.com/photo-1615529182904-14819c35db37?w=800&auto=format&fit=crop"}
+                  alt={service?.serviceName || "Service Image"}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute top-4 left-4">
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getTypeColor(service?.type)}`}>
+                    {service?.type || "General"}
+                  </span>
+                </div>
+                <div className="absolute top-4 right-4">
+                  <span className="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-lg text-sm font-bold text-green-600">
+                    {service?.price?.toLocaleString("en-BD") || 0} BDT
+                  </span>
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+
+              {/* Content Section */}
+              <div className="p-5">
+                <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-1">
+                  {service?.serviceName || "Unnamed Service"}
+                </h3>
+                
+                <div className="flex items-center mb-3">
+                  <svg className="w-5 h-5 text-yellow-400 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                  <span className="text-gray-600">4.8</span>
+                  <span className="mx-2 text-gray-400">•</span>
+                  <span className="text-gray-500 text-sm">
+                    {service?.unit === "per_hour" ? "Per Hour" : 
+                     service?.unit === "per_day" ? "Per Day" : 
+                     service?.unit === "per_project" ? "Per Project" : service?.unit || "Fixed"}
+                  </span>
+                </div>
+
+                <p className="text-gray-500 text-sm mb-4 line-clamp-2">
+                  {service?.description || "Premium decoration service with expert craftsmanship."}
+                </p>
+
+                <div className="flex justify-between items-center">
+                  <div>
+                    <span className="text-sm font-medium text-gray-700">Starting at</span>
+                    <div className="text-xl font-bold text-green-600">
+                      {service?.price?.toLocaleString("en-BD") || 0} BDT
+                    </div>
+                  </div>
+                  <Link
+                    to={`/services/${service?._id}`}
+                    className="px-5 py-2.5 bg-gradient-to-r from-green-600 to-[#DB995A] text-white font-medium rounded-xl hover:from-green-700 hover:to-[#DB995A]/90 transition-all duration-300 transform hover:scale-105"
+                  >
+                    View Details
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Empty State */}
+        {!loading && filteredServices.length === 0 && (
+          <div className="text-center py-16">
+            <div className="inline-block p-6 bg-gray-100 rounded-full mb-6">
+              <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">No Services Found</h3>
+            <p className="text-gray-600 mb-8 max-w-md mx-auto">
+              We couldn't find any services matching your criteria. Try adjusting your filters or search term.
+            </p>
+            <button
+              onClick={resetFilters}
+              className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-xl transition"
+            >
+              Reset All Filters
+            </button>
+          </div>
+        )}
+
+        {/* CTA Section */}
+        <div className="mt-16 bg-gradient-to-r from-green-600 to-[#DB995A] rounded-2xl p-8 md:p-12 text-white text-center">
+          <h3 className="text-2xl md:text-3xl font-bold mb-4">
+            Need a Custom Decoration Solution?
+          </h3>
+          <p className="text-green-100 mb-6 max-w-2xl mx-auto">
+            We specialize in creating bespoke decoration plans tailored to your unique vision and requirements.
+          </p>
           <Link
-            to={`/services/${service?._id}`} // Dynamic id
-            className="btn btn-primary btn-sm"
+            to="/contact"
+            className="inline-flex items-center px-8 py-3 bg-white text-green-600 font-bold rounded-xl hover:bg-gray-100 transition"
           >
-            View Details
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+            Request Custom Quote
           </Link>
         </div>
       </div>
-    </div>
-  ))}
-</div>
-
-
-      {filteredServices.length === 0 && (
-        <p className="text-center text-lg mt-10">No services found 😔</p>
-      )}
     </div>
   );
 };
