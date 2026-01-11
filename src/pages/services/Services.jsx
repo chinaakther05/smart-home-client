@@ -33,7 +33,7 @@ const Services = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       {/* Search + Filter */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <input
           type="text"
           placeholder="Search service..."
@@ -72,36 +72,37 @@ const Services = () => {
       </div>
 
       {/* Service Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3  gap-6">
-        {filteredServices.map((service) => (
-          <div key={service._id} className="card bg-pink-100 shadow-xl">
-            <figure>
-              <img
-                src={service?.image || "https://via.placeholder.com/400x200"}
-                alt={service?.serviceName || "Service Image"}
-                className="h-60 w-full object-cover"
-              />
-            </figure>
+     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+  {filteredServices.map((service) => (
+    <div key={service._id} className="card bg-white h-[400px] shadow-xl">
+      <figure>
+        <img
+          src={service?.image || "https://via.placeholder.com/400x200"}
+          alt={service?.serviceName || "Service Image"}
+          className="h-60 w-full object-cover"
+        />
+      </figure>
 
-            <div className="card-body">
-              <h2 className="card-title mt-4">{service?.serviceName || "Unnamed Service"}</h2>
-              <p>Type: {service?.type || "N/A"}</p>
-              <p className="font-bold text-primary">
-                Price: {service?.price?.toLocaleString("en-BD") || 0} BDT ({service?.unit || "N/A"})
-              </p>
+      <div className="card-body">
+        <h2 className="card-title mt-4">{service?.serviceName || "Unnamed Service"}</h2>
+        <p>Type: {service?.type || "N/A"}</p>
+        <p className="font-bold text-primary">
+          Price: {service?.price?.toLocaleString("en-BD") || 0} BDT ({service?.unit || "N/A"})
+        </p>
 
-              <div className="card-actions justify-end">
-                <Link
-                  to={`/services/${service?._id}`} // Dynamic id
-                  className="btn btn-primary btn-sm"
-                >
-                  View Details
-                </Link>
-              </div>
-            </div>
-          </div>
-        ))}
+        <div className="card-actions justify-end">
+          <Link
+            to={`/services/${service?._id}`} // Dynamic id
+            className="btn btn-primary btn-sm"
+          >
+            View Details
+          </Link>
+        </div>
       </div>
+    </div>
+  ))}
+</div>
+
 
       {filteredServices.length === 0 && (
         <p className="text-center text-lg mt-10">No services found 😔</p>

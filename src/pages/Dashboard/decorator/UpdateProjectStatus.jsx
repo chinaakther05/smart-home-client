@@ -15,6 +15,7 @@ const UpdateProjectStatus = () => {
       try {
         const token = await user.getIdToken();
         const res = await axios.get(
+         
           `https://smart-home-server-five.vercel.app/projects/assigned/${user.email}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );

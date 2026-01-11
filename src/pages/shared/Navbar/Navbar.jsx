@@ -48,10 +48,10 @@ const Navbar = () => {
       </> );
 
   return (
-    <div className="navbar bg-indigo-100 shadow-sm">
+    <div className="navbar w-full bg-indigo-100 shadow-sm">
 
       {/* LEFT */}
-      <div className="navbar-start">
+      <div className="navbar-start max-w-full">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
             <svg xmlns="http://www.w3.org/2000/svg"
