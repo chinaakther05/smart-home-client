@@ -2,20 +2,30 @@ import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { AuthContext } from "../../../context/AuthContext/AuthContext";
+import { 
+  FiCheckCircle, 
+  FiClock, 
+  FiCalendar, 
+  FiUser, 
+  FiPackage,
+  FiEdit2,
+  FiRefreshCw
+} from "react-icons/fi";
 
 const UpdateProjectStatus = () => {
   const { user } = useContext(AuthContext);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState("all"); // all, pending, in-progress, completed
 
   useEffect(() => {
     if (!user?.email) return;
 
     const fetchProjects = async () => {
       try {
+        setLoading(true);
         const token = await user.getIdToken();
         const res = await axios.get(
-         
           `https://smart-home-server-five.vercel.app/projects/assigned/${user.email}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -51,7 +61,7 @@ const UpdateProjectStatus = () => {
 
       Swal.fire({
         icon: "success",
-        title: "Updated!",
+        title: "Status Updated!",
         text: `Project marked as "${newStatus}"`,
         timer: 1500,
         showConfirmButton: false,
@@ -65,68 +75,285 @@ const UpdateProjectStatus = () => {
     }
   };
 
-  if (loading)
+  // Filter projects based on status
+  const filteredProjects = projects.filter(project => {
+    if (statusFilter === "all") return true;
+    return project.status === statusFilter;
+  });
+
+  // Calculate project statistics
+  const totalProjects = projects.length;
+  const completedProjects = projects.filter(p => p.status === "completed").length;
+  const inProgressProjects = projects.filter(p => p.status === "in-progress").length;
+  const pendingProjects = projects.filter(p => p.status === "pending").length;
+
+  if (loading) {
     return (
       <div className="flex justify-center py-10">
-        <span className="loading loading-spinner text-primary loading-lg"></span>
+        <span className="loading loading-spinner loading-lg text-primary"></span>
       </div>
     );
-
-  if (projects.length === 0)
-    return <p className="text-center py-6">No assigned projects found.</p>;
+  }
 
   return (
-    <div className="p-4 space-y-4">
-      <h1 className="text-2xl font-bold mb-4 flex items-center gap-2">
-        Update Project Status
-        <span className="bg-purple-600 text-white text-sm px-2 py-1 rounded-full">
-          {projects.length}
-        </span>
-      </h1>
+    <div className="p-4 md:p-6 space-y-6">
+      {/* Header */}
+      <div className="mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center gap-3">
+              <div className="p-2 bg-purple-600 text-white rounded-lg">
+                <FiEdit2 className="text-2xl" />
+              </div>
+              Update Project Status
+            </h1>
+            <p className="text-gray-600 mt-2">Update and track your assigned projects</p>
+          </div>
+          
+          <div className="mt-4 md:mt-0">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-2 rounded-lg border border-blue-100">
+              <div className="flex items-center gap-2">
+                <span className="text-gray-700">Total Projects:</span>
+                <span className="bg-purple-600 text-white text-sm font-bold px-3 py-1 rounded-full">
+                  {totalProjects}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <ul className="space-y-3">
-        {projects.map((project) => (
-          <li
-            key={project._id}
-            className="border p-4 rounded-xl shadow flex justify-between items-center"
-          >
-            <div>
-              <p className="font-semibold">{project.serviceName}</p>
-              <p className="mt-1">
-                Status:{" "}
-                <span
-                  className={`px-2 py-1 rounded text-white capitalize ${
-                    project.status === "completed"
-                      ? "bg-green-500"
-                      : project.status === "in-progress"
-                      ? "bg-yellow-500"
-                      : "bg-gray-400"
+        {/* Status Statistics */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          {/* Total Projects */}
+          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <FiPackage className="w-5 h-5 text-blue-600" />
+              </div>
+              <h3 className="font-medium text-gray-700">Total Projects</h3>
+            </div>
+            <p className="text-3xl font-bold text-gray-900">{totalProjects}</p>
+            <p className="text-sm text-gray-600 mt-1">Assigned to you</p>
+          </div>
+
+          {/* Completed */}
+          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <FiCheckCircle className="w-5 h-5 text-green-600" />
+              </div>
+              <h3 className="font-medium text-gray-700">Completed</h3>
+            </div>
+            <p className="text-3xl font-bold text-gray-900">{completedProjects}</p>
+            <p className="text-sm text-gray-600 mt-1">Successfully delivered</p>
+          </div>
+
+          {/* In Progress */}
+          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 bg-yellow-100 rounded-lg">
+                <FiClock className="w-5 h-5 text-yellow-600" />
+              </div>
+              <h3 className="font-medium text-gray-700">In Progress</h3>
+            </div>
+            <p className="text-3xl font-bold text-gray-900">{inProgressProjects}</p>
+            <p className="text-sm text-gray-600 mt-1">Currently working</p>
+          </div>
+
+          {/* Pending */}
+          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <FiCalendar className="w-5 h-5 text-gray-600" />
+              </div>
+              <h3 className="font-medium text-gray-700">Pending</h3>
+            </div>
+            <p className="text-3xl font-bold text-gray-900">{pendingProjects}</p>
+            <p className="text-sm text-gray-600 mt-1">Awaiting start</p>
+          </div>
+        </div>
+
+        {/* Filter Section */}
+        <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm mb-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="flex items-center gap-2">
+              <FiRefreshCw className="text-gray-500" />
+              <span className="text-sm font-medium text-gray-700">Filter by Status:</span>
+            </div>
+            
+            <div className="flex flex-wrap gap-2">
+              {[
+                { value: "all", label: "All Projects", color: "blue" },
+                { value: "pending", label: "Pending", color: "gray" },
+                { value: "in-progress", label: "In Progress", color: "yellow" },
+                { value: "completed", label: "Completed", color: "green" }
+              ].map(({ value, label, color }) => (
+                <button
+                  key={value}
+                  onClick={() => setStatusFilter(value)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    statusFilter === value
+                      ? `bg-${color}-100 text-${color}-800 border border-${color}-300`
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
-                  {project.status}
-                </span>
-              </p>
+                  {label}
+                  {value !== "all" && (
+                    <span className="ml-1 bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">
+                      {projects.filter(p => p.status === value).length}
+                    </span>
+                  )}
+                </button>
+              ))}
             </div>
+          </div>
+        </div>
+      </div>
 
-            <div className="flex space-x-2">
-              <button
-                className="btn btn-sm btn-success"
-                onClick={() => handleStatusChange(project._id, "completed")}
-                disabled={project.status === "completed"}
-              >
-                Completed
-              </button>
-              <button
-                className="btn btn-sm btn-warning"
-                onClick={() => handleStatusChange(project._id, "in-progress")}
-                disabled={project.status === "in-progress"}
-              >
-                In Progress
-              </button>
+      {/* Projects List */}
+      <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-800">
+            {statusFilter === "all" ? "All Projects" : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)} Projects
+            <span className="bg-gray-100 text-gray-800 text-sm px-3 py-1 rounded-full ml-3">
+              {filteredProjects.length}
+            </span>
+          </h2>
+        </div>
+
+        {filteredProjects.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+              <FiPackage className="text-gray-400 text-2xl" />
             </div>
-          </li>
-        ))}
-      </ul>
+            <h3 className="text-lg font-medium text-gray-700 mb-2">No projects found</h3>
+            <p className="text-gray-500 max-w-md mx-auto">
+              {statusFilter === "all" 
+                ? "You don't have any assigned projects yet" 
+                : `No ${statusFilter} projects found`}
+            </p>
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-200">
+            {filteredProjects.map((project) => (
+              <div 
+                key={project._id} 
+                className="p-6 hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                  {/* Project Info */}
+                  <div className="flex-1">
+                    <div className="flex items-start gap-4">
+                      <div className="p-3 bg-purple-100 rounded-lg">
+                        <FiPackage className="w-6 h-6 text-purple-600" />
+                      </div>
+                      
+                      <div className="flex-1">
+                        <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2">
+                          <h3 className="text-lg font-semibold text-gray-900">
+                            {project.serviceName}
+                          </h3>
+                          <span className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${
+                            project.status === "completed" 
+                              ? "bg-green-100 text-green-800" 
+                              : project.status === "in-progress" 
+                              ? "bg-yellow-100 text-yellow-800" 
+                              : "bg-gray-100 text-gray-800"
+                          }`}>
+                            {project.status}
+                          </span>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+                          <div className="flex items-center gap-2">
+                            <FiUser className="text-gray-400" />
+                            <span>Client: {project.customerEmail}</span>
+                          </div>
+                          
+                          {project.date && (
+                            <div className="flex items-center gap-2">
+                              <FiCalendar className="text-gray-400" />
+                              <span>Date: {new Date(project.date).toLocaleDateString()}</span>
+                            </div>
+                          )}
+                          
+                          {project.time && (
+                            <div className="flex items-center gap-2">
+                              <FiClock className="text-gray-400" />
+                              <span>Time: {project.time}</span>
+                            </div>
+                          )}
+                          
+                          {project.location && (
+                            <div className="flex items-center gap-2">
+                              <FiCalendar className="text-gray-400" />
+                              <span>Location: {project.location}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <button
+                      className={`btn btn-sm flex items-center gap-2 ${
+                        project.status === "completed" 
+                          ? "btn-success" 
+                          : "btn-outline btn-success"
+                      }`}
+                      onClick={() => handleStatusChange(project._id, "completed")}
+                      disabled={project.status === "completed"}
+                    >
+                      <FiCheckCircle />
+                      Mark Completed
+                    </button>
+                    
+                    <button
+                      className={`btn btn-sm flex items-center gap-2 ${
+                        project.status === "in-progress" 
+                          ? "btn-warning" 
+                          : "btn-outline btn-warning"
+                      }`}
+                      onClick={() => handleStatusChange(project._id, "in-progress")}
+                      disabled={project.status === "in-progress"}
+                    >
+                      <FiClock />
+                      Mark In Progress
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Footer Stats */}
+        {filteredProjects.length > 0 && (
+          <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div className="text-sm text-gray-600">
+                Showing {filteredProjects.length} of {projects.length} projects
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <span className="text-sm">Completed: {completedProjects}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                  <span className="text-sm">In Progress: {inProgressProjects}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
+                  <span className="text-sm">Pending: {pendingProjects}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
