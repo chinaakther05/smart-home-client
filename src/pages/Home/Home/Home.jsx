@@ -4,6 +4,8 @@ import HeroSection from '../HeroSection/HeroSection';
 import Reviews from '../Reviews';
 import TopServices from '../TopServices';
 import WhyChooseUs from './WhyChooseUs/WhyChooseUs';
+import FeaturedSection from '../FeaturedSection';
+import CallToActionSection from '../CallToActionSection';
 
 
 const reviewsPromise = fetch('/reviews.json').then(res => res.json());
@@ -26,6 +28,9 @@ const Home = () => {
           <Reviews reviewsPromise={reviewsPromise} className="dark:bg-gray-900 dark:text-gray-100" />
 
           <WhyChooseUs className="dark:bg-gray-900 dark:text-gray-100"></WhyChooseUs>
+
+          <FeaturedSection></FeaturedSection>
+          <CallToActionSection></CallToActionSection>
 
         </div>
     );
