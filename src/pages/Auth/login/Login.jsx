@@ -33,7 +33,7 @@ const Login = () => {
   };
 
   return (
-    <div className="card mt-8 w-full max-w-sm mx-auto shadow-2xl bg-green-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+    <div className="card mt-8 w-full max-w-sm mx-auto shadow-2xl  dark:bg-gray-800 text-gray-900 dark:text-gray-100">
       <h3 className="text-3xl text-center mt-4">Welcome Back</h3>
       <p className="text-center mb-4">Please login</p>
 

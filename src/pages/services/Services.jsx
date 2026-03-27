@@ -67,8 +67,8 @@ const Services = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Page Header */}
-<div className="text-center mb-12">
-  <h2 className="text-4xl md:text-5xl font-bold mb-4">
+<div className="text-center mb-4">
+  <h2 className="text-4xl md:text-5xl font-bold mb-6 ">
     <span className="text-gray-900 dark:text-white animate-fade-in">Our </span>
     
     <span className="text-green-600 dark:text-green-400 animate-pulse animate-infinite animate-duration-[2000ms]">
@@ -93,89 +93,90 @@ const Services = () => {
   }
 `}</style>
         {/* Search + Filter Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-8 border border-gray-100 dark:border-gray-700 transition-colors duration-300">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Search Services
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search by name..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="w-full px-4 py-3 pl-10 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
-                />
-                <div className="absolute left-3 top-3.5">
-                  <svg className="w-5 h-5 text-gray-400 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-              </div>
-            </div>
+       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 md:p-6 mb-8 border border-gray-100 dark:border-gray-700 transition-colors duration-300">
+  <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 md:gap-4 items-end">
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Service Type
-              </label>
-              <select
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent transition appearance-none"
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-              >
-                <option value="">All Types</option>
-                <option value="home">Home Decoration</option>
-                <option value="wedding">Wedding Decoration</option>
-                <option value="event">Event Decoration</option>
-                <option value="office">Office Decoration</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Price Range
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="number"
-                  placeholder="Min"
-                  className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
-                  value={minPrice}
-                  onChange={(e) => setMinPrice(e.target.value)}
-                />
-                <span className="self-center text-gray-500 dark:text-gray-300">-</span>
-                <input
-                  type="number"
-                  placeholder="Max"
-                  className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="flex items-end">
-              <button
-                onClick={resetFilters}
-                className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-100 font-medium rounded-xl transition"
-              >
-                Reset Filters
-              </button>
-            </div>
-          </div>
+    {/* Search */}
+    <div>
+      <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        Search
+      </label>
+      <div className="relative">
+        <input
+          type="text"
+          placeholder="Search..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full px-3 md:px-4 py-2 md:py-2.5 pl-9 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm md:text-base focus:ring-1 md:focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+        />
+        <div className="absolute left-2 top-2.5 md:top-3">
+          <svg className="w-4 h-4 md:w-5 md:h-5 text-gray-400 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
         </div>
+      </div>
+    </div>
 
-        {/* Results Summary */}
-        <div className="flex justify-between items-center mb-6">
-          <p className="text-gray-600 dark:text-gray-300">
-            Showing <span className="font-bold text-green-600 dark:text-green-400">{filteredServices.length}</span> services
-            {search && <span> for "<span className="font-semibold">{search}</span>"</span>}
-          </p>
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            {services.length} total services available
-          </div>
-        </div>
+    {/* Service Type */}
+    <div>
+      <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        Type
+      </label>
+      <select
+        className="w-full px-3 md:px-4 py-2 md:py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm md:text-base focus:ring-1 md:focus:ring-2 focus:ring-green-500 focus:border-transparent transition appearance-none"
+        value={filterType}
+        onChange={(e) => setFilterType(e.target.value)}
+      >
+        <option value="">All</option>
+        <option value="home">Home</option>
+        <option value="wedding">Wedding</option>
+        <option value="event">Event</option>
+        <option value="office">Office</option>
+      </select>
+    </div>
+
+    {/* Min Price */}
+    <div>
+      <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        Min Price
+      </label>
+      <input
+        type="number"
+        placeholder="Min"
+        value={minPrice}
+        onChange={(e) => setMinPrice(e.target.value)}
+        className="w-full px-3 md:px-4 py-2 md:py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm md:text-base focus:ring-1 md:focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+      />
+    </div>
+
+    {/* Max Price */}
+    <div>
+      <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        Max Price
+      </label>
+      <input
+        type="number"
+        placeholder="Max"
+        value={maxPrice}
+        onChange={(e) => setMaxPrice(e.target.value)}
+        className="w-full px-3 md:px-4 py-2 md:py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm md:text-base focus:ring-1 md:focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+      />
+    </div>
+
+    {/* Reset Button */}
+    <div className="flex items-end">
+      <button
+        onClick={resetFilters}
+        className="w-full px-3 md:px-4 py-2 md:py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-100 font-medium rounded-xl text-sm md:text-base transition"
+      >
+        Reset
+      </button>
+    </div>
+
+  </div>
+</div>
+
+       
 
         {/* Loading State */}
         {loading && (

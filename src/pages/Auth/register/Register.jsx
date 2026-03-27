@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import useAuth from '../../../hooks/useAuth';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import UseAxiosSecure from '../../../hooks/UseAxiosSecure';
+import UseAxiosSecure from '../../../hooks/useAxiosSecure';
 
 const Register = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -62,7 +62,7 @@ const Register = () => {
     };
 
     return (
-        <div className="card mt-8 w-full max-w-sm mx-auto shrink-0 shadow-2xl bg-green-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+        <div className="card mt-8 w-full max-w-sm mx-auto shrink-0 shadow-2xl  dark:bg-gray-800 text-gray-900 dark:text-gray-100">
             <h3 className='text-3xl mt-3 text-center'>Welcome to Smart Home</h3>
             <p className='text-center mb-4'>Please register</p>
 
@@ -116,7 +116,7 @@ const Register = () => {
 
                     <button 
                         type="submit" 
-                        className="btn btn-neutral mt-4 dark:bg-green-600 dark:hover:bg-green-700 dark:text-white w-full"
+                        className="btn btn-primary mt-4 dark:bg-green-600 dark:hover:bg-green-700 dark:text-white w-full"
                     >
                         Register
                     </button>
