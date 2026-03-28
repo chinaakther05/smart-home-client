@@ -48,36 +48,30 @@ const AuthProvider = ({ children }) => {
   };
 
   // Observe Firebase Auth state
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
+useEffect(() => {
+  const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    setUser(currentUser);
+    setLoading(false);
 
-      if (currentUser?.email) {
-        try {
-          // Check if user exists in MongoDB
-          const res = await axios.get(`https://smart-home-server-five.vercel.app/users/${currentUser.email}/role`);
-          const roleExists = res.data?.role;
-
-          if (!roleExists) {
-            // Add new user if not exists
-            await axios.post("https://smart-home-server-five.vercel.app/users", {
-              email: currentUser.email,
-              displayName: currentUser.displayName,
-              photoURL: currentUser.photoURL,
-              role: "user", // default role
-              createAt: new Date()
-            });
-            console.log("New user added to MongoDB");
+    if (currentUser?.email) {
+      try {
+        const res = await axios.post(
+          "https://smart-home-server-five.vercel.app/users",
+          {
+            email: currentUser.email,
+            displayName: currentUser.displayName || "No Name",
           }
-        } catch (err) {
-          console.error("Error syncing user with MongoDB:", err.response?.data || err);
-        }
-      }
-    });
+        );
 
-    return () => unsubscribe();
-  }, []);
+        console.log("User saved:", res.data);
+      } catch (error) {
+        console.log("Error saving user:", error.message);
+      }
+    }
+  });
+
+  return () => unsubscribe();
+}, []);
 
   const authInfo = {
     user,

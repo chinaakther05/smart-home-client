@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from '../../assets/SmartNest logo .png';
+import logo from '../../assets/home.png';
 import { Link } from 'react-router-dom';
 
 const Logo = () => {
@@ -15,8 +15,8 @@ const Logo = () => {
 
         {/* Logo Text */}
         <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white  sm:inline">
-          Smart
-          <span className="text-green-600 dark:text-green-400">Nest</span>
+          Style
+          <span className="text-green-600 dark:text-green-400">Decor</span>
         </span>
       </div>
     </Link>

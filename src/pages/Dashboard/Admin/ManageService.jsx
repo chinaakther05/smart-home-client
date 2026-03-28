@@ -17,7 +17,7 @@ const ManageService = () => {
   // Fetch all services
   const fetchServices = () => {
     setLoading(true);
-    fetch("https://smart-home-server-five.vercel.app/services")
+    fetch("https://smart-home-server-five.vercel.app/")
       .then(res => res.json())
       .then(data => {
         setServices(data);
@@ -47,7 +47,7 @@ const ManageService = () => {
       cancelButtonText: "Cancel"
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(`https://smart-home-server-five.vercel.app/services/${id}`, { 
+        fetch(`https://smart-home-server-five.vercel.app//${id}`, { 
           method: "DELETE" 
         })
           .then(res => res.json())
@@ -77,7 +77,7 @@ const ManageService = () => {
       return;
     }
 
-    fetch(`https://smart-home-server-five.vercel.app/services/${editingService._id}`, {
+    fetch(`https://smart-home-server-five.vercel.app//${editingService._id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ serviceName: editName, price: editPrice })
@@ -106,7 +106,7 @@ const ManageService = () => {
 
     const newService = { serviceName: newName, price: newPrice };
 
-    fetch("https://smart-home-server-five.vercel.app/services", {
+    fetch("https://smart-home-server-five.vercel.app/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newService)

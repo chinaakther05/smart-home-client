@@ -15,7 +15,32 @@ const Payment = () => {
     }
   });
 
-  const handlePayment = async() =>{
+  {/** new */}
+ const handlePayment = async () => {
+  const paymentInfo = {
+    cost: booking.cost,
+    serviceId: booking._id,
+    createdByEmail: booking.createdByEmail,
+    serviceName: booking.serviceName,
+  };
+
+  const res = await fetch(
+    'https://smart-home-server-five.vercel.app/create-checkout-session',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(paymentInfo),
+    }
+  );
+
+  const data = await res.json();
+
+  console.log("FINAL URL:", data.url); // 🔥 important
+
+  window.location.href = data.url;
+};
+
+  {/*const handlePayment = async() =>{
     const paymentInfo = {
       cost: booking.cost,
       serviceId:booking._id,
@@ -23,7 +48,7 @@ const Payment = () => {
       serviceName:booking.serviceName
     }
 
-    const res = await axiosSecure.post('/create-checkout-session', paymentInfo);
+   const res = await axiosSecure.post('https://smart-home-server-five.vercel.app/create-checkout-session', paymentInfo);
 
     console.log(res.data);
     window.location.href = res.data.url;
@@ -35,7 +60,7 @@ const Payment = () => {
         <span className="loading loading-infinity loading-xl"></span>
       </div>
     );
-  }
+  }*/}
 
   return (
     <div className="p-6">

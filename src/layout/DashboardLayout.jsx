@@ -141,7 +141,8 @@ const DashboardLayout = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-green-300">
-                SmartNest
+                StyleDecor
+
               </h1>
               <p className="text-green-200 dark:text-gray-300 text-sm">Dashboard</p>
             </div>
